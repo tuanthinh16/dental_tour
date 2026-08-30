@@ -23,6 +23,60 @@ Route::prefix('admin')
             Route::get('/', Admin\DashboardController::class)
                 ->middleware('permission:dashboard.view')
                 ->name('dashboard');
+            Route::get('landing-editor', [
+                Admin\LandingEditorController::class,
+                'index',
+            ])
+                ->middleware('permission:pages.update')
+                ->name('landing-editor');
+            Route::put('landing-editor/hero-image', [
+                Admin\LandingEditorController::class,
+                'updateHeroImage',
+            ])
+                ->middleware('permission:pages.update')
+                ->name('landing-editor.hero-image');
+            Route::put('landing-editor/destinations/{destination}', [
+                Admin\LandingEditorController::class,
+                'updateDestination',
+            ])
+                ->middleware('permission:pages.update')
+                ->name('landing-editor.destinations.update');
+            Route::post('landing-editor/destinations', [
+                Admin\LandingEditorController::class,
+                'storeDestination',
+            ])
+                ->middleware('permission:pages.update')
+                ->name('landing-editor.destinations.store');
+            Route::delete('landing-editor/destinations/{destination}', [
+                Admin\LandingEditorController::class,
+                'destroyDestination',
+            ])
+                ->middleware('permission:pages.update')
+                ->name('landing-editor.destinations.destroy');
+            Route::post('landing-editor/tours', [
+                Admin\LandingEditorController::class,
+                'storeTour',
+            ])
+                ->middleware('permission:pages.update')
+                ->name('landing-editor.tours.store');
+            Route::put('landing-editor/tours/{tour}', [
+                Admin\LandingEditorController::class,
+                'updateTour',
+            ])
+                ->middleware('permission:pages.update')
+                ->name('landing-editor.tours.update');
+            Route::delete('landing-editor/tours/{tour}', [
+                Admin\LandingEditorController::class,
+                'destroyTour',
+            ])
+                ->middleware('permission:pages.update')
+                ->name('landing-editor.tours.destroy');
+            Route::put('landing-editor/destinations-order', [
+                Admin\LandingEditorController::class,
+                'reorderDestinations',
+            ])
+                ->middleware('permission:pages.update')
+                ->name('landing-editor.destinations.reorder');
             Route::get('destinations', [
                 Admin\DestinationController::class,
                 'index',
@@ -59,43 +113,6 @@ Route::prefix('admin')
             ])
                 ->middleware('permission:destinations.delete')
                 ->name('destinations.destroy');
-
-            Route::get('tour-categories', [
-                Admin\TourCategoryController::class,
-                'index',
-            ])
-                ->middleware('permission:tours.view')
-                ->name('tour-categories.index');
-            Route::get('tour-categories/create', [
-                Admin\TourCategoryController::class,
-                'create',
-            ])
-                ->middleware('permission:tours.create')
-                ->name('tour-categories.create');
-            Route::post('tour-categories', [
-                Admin\TourCategoryController::class,
-                'store',
-            ])
-                ->middleware('permission:tours.create')
-                ->name('tour-categories.store');
-            Route::get('tour-categories/{tour_category}/edit', [
-                Admin\TourCategoryController::class,
-                'edit',
-            ])
-                ->middleware('permission:tours.update')
-                ->name('tour-categories.edit');
-            Route::put('tour-categories/{tour_category}', [
-                Admin\TourCategoryController::class,
-                'update',
-            ])
-                ->middleware('permission:tours.update')
-                ->name('tour-categories.update');
-            Route::delete('tour-categories/{tour_category}', [
-                Admin\TourCategoryController::class,
-                'destroy',
-            ])
-                ->middleware('permission:tours.delete')
-                ->name('tour-categories.destroy');
 
             Route::get('included-services', [
                 Admin\IncludedServiceController::class,

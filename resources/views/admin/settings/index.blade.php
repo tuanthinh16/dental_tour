@@ -73,7 +73,7 @@
                                 <span class="mb-1 block text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400">Mẫu hiển thị</span>
                                 <p data-font-preview="{{ $key }}" class="truncate text-lg text-slate-900" style="font-family: {{ $theme[$key.'_stack'] }}" title="{{ $sample }}">{{ $sample }}</p>
                             </div>
-                            <select id="{{ $key }}" data-theme-font data-font-key="{{ $key }}" data-css-variable="--{{ str_replace('_', '-', $key) }}" data-default="Satoshi" name="{{ $key }}" class="min-w-0 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:border-brand-500">
+                            <select id="{{ $key }}" data-theme-font data-font-key="{{ $key }}" data-css-variable="--{{ str_replace('_', '-', $key) }}" data-default="{{ \App\Support\ThemeOptions::DEFAULTS[$key] }}" name="{{ $key }}" class="min-w-0 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm outline-none focus:border-brand-500">
                                 @foreach($fonts as $font)
                                     <option value="{{ $font }}" @selected(old($key, $theme[$key]) === $font)>{{ $font }}</option>
                                 @endforeach

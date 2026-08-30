@@ -10,9 +10,9 @@ class ThemeOptions
         'ui_color_background' => '#FAF8F2',
         'ui_color_text' => '#0B1F1B',
         'ui_color_surface' => '#F3EEE3',
-        'ui_font_header' => 'Satoshi',
-        'ui_font_title' => 'Satoshi',
-        'ui_font_body' => 'Satoshi',
+        'ui_font_header' => 'Be Vietnam Pro',
+        'ui_font_title' => 'Lora',
+        'ui_font_body' => 'Inter',
     ];
 
     public const FONTS = [
@@ -22,6 +22,11 @@ class ThemeOptions
         'Manrope' => "'Manrope', ui-sans-serif, system-ui, sans-serif",
         'DM Sans' => "'DM Sans', ui-sans-serif, system-ui, sans-serif",
         'Playfair Display' => "'Playfair Display', ui-serif, Georgia, serif",
+
+        // Thêm 2026-08-30: bộ font mặc định mới cho điều hướng, tiêu đề và nội dung website.
+        'Be Vietnam Pro' => "'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif",
+        'Lora' => "'Lora', ui-serif, Georgia, serif",
+        'Inter' => "'Inter', ui-sans-serif, system-ui, sans-serif",
     ];
 
     public static function normalize(array $settings): array

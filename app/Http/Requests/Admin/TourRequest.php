@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Support\MoneyFormatter;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -17,10 +18,15 @@ class TourRequest extends FormRequest
         $values = [
             'is_active' => $this->boolean('is_active'),
             'is_featured' => $this->boolean('is_featured'),
+            'currency' => MoneyFormatter::normalizeCurrency($this->input('currency')),
         ];
 
         if ($this->has('service_selection_submitted') && ! $this->has('service_ids')) {
             $values['service_ids'] = [];
+        }
+
+        if ($this->has('included_product_selection_submitted') && ! $this->has('included_product_ids')) {
+            $values['included_product_ids'] = [];
         }
 
         $this->merge($values);
@@ -31,14 +37,18 @@ class TourRequest extends FormRequest
         $id = $this->route('tour')?->id;
 
         return [
-            'category_id' => ['nullable', 'exists:tour_categories,id'],
-            'destination_id' => ['nullable', 'exists:destinations,id'],
+            'destination_id' => [
+                'nullable',
+                Rule::exists('products', 'id')
+                    ->where('product_type', 'destination')
+                    ->whereNull('deleted_at'),
+            ],
             'name' => ['required', 'string', 'max:255'],
             'slug' => [
                 'required',
                 'alpha_dash',
                 'max:255',
-                Rule::unique('tours')->ignore($id),
+                Rule::unique('products', 'slug')->ignore($id),
             ],
             'short_description' => ['required', 'string'],
             'description' => ['required', 'string'],
@@ -56,8 +66,8 @@ class TourRequest extends FormRequest
                 'gte:base_price',
                 'max:9999999999.99',
             ],
-            'currency' => ['required', 'string', 'size:3'],
-            'image_id' => ['nullable', 'exists:media,id'],
+            'currency' => ['required', Rule::in(array_keys(MoneyFormatter::SUPPORTED_CURRENCIES))],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'badge' => ['nullable', 'string', 'max:255'],
             'is_featured' => ['boolean'],
             'sort_order' => ['required', 'integer', 'min:0'],
@@ -70,7 +80,16 @@ class TourRequest extends FormRequest
             'service_ids.*' => [
                 'integer',
                 'distinct',
-                Rule::exists('tour_services', 'id')
+                Rule::exists('categories', 'id')
+                    ->where('is_active', true)
+                    ->whereNull('deleted_at'),
+            ],
+            'included_product_ids' => ['nullable', 'array'],
+            'included_product_ids.*' => [
+                'integer',
+                'distinct',
+                Rule::exists('products', 'id')
+                    ->where('product_type', 'addon')
                     ->where('is_active', true)
                     ->whereNull('deleted_at'),
             ],

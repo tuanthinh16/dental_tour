@@ -15,11 +15,17 @@
 
     <section class="bg-cream px-5 py-32 md:px-10 md:py-48">
         <div class="mx-auto max-w-[90rem]">
-            <div class="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
-                @forelse($tours as $tour)
-                    @include('tours._card', ['tour' => $tour])
+            <div data-tour-zigzag-grid class="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-x-8 md:gap-y-12 lg:gap-x-10 lg:gap-y-14">
+                @forelse($tours as $index => $tour)
+                    <div @class([
+                        'min-w-0 md:col-span-6 lg:col-span-5',
+                        'lg:col-start-1' => $index % 2 === 0,
+                        'lg:col-start-7 lg:pt-16' => $index % 2 === 1,
+                    ])>
+                        @include('tours._card', ['tour' => $tour])
+                    </div>
                 @empty
-                    <p class="text-lg text-ink/55">Chưa có tour phù hợp.</p>
+                    <p class="text-lg text-ink/55 md:col-span-12">Chưa có tour phù hợp.</p>
                 @endforelse
             </div>
             <div class="mt-20">{{ $tours->links() }}</div>

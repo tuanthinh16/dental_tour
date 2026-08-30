@@ -17,7 +17,7 @@
     --color-brand-500: #14a37f;
     --color-brand-600: #0c8165;
     --color-brand-900: #083d35;
-    --font-sans: var(--ui-font-body, 'Satoshi', ui-sans-serif, system-ui, sans-serif);
+    --font-sans: var(--ui-font-body, 'Inter', ui-sans-serif, system-ui, sans-serif);
 }
 
 :root {
@@ -30,9 +30,9 @@
     --ui-color-primary-contrast: #ffffff;
     --ui-color-accent-contrast: #0b1f1b;
     --ui-color-text-contrast: #ffffff;
-    --ui-font-header: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
-    --ui-font-title: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
-    --ui-font-body: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+    --ui-font-header: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
+    --ui-font-title: 'Lora', ui-serif, Georgia, serif;
+    --ui-font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
 html {
@@ -119,12 +119,6 @@ h3,
 .destination-accordion .destination-panel:hover,
 .destination-accordion .destination-panel:focus-within {
     flex: 2.4 1 0;
-}
-
-.tour-stack-card {
-    position: sticky;
-    top: var(--stack-offset, 7rem);
-    transform-origin: center top;
 }
 
 .field-control {

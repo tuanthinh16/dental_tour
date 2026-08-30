@@ -2,86 +2,41 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Collection;
 
-class Tour extends Model
+class Tour extends Product
 {
-    use SoftDeletes;
-
-    protected $fillable = [
-        'category_id',
-        'destination_id',
-        'name',
-        'slug',
-        'short_description',
-        'description',
-        'duration_days',
-        'duration_nights',
-        'base_price',
-        'original_price',
-        'currency',
-        'image_id',
-        'badge',
-        'is_featured',
-        'sort_order',
-        'is_active',
-    ];
-
-    protected function casts(): array
+    protected static function booted(): void
     {
-        return [
-            'base_price' => 'decimal:2',
-            'original_price' => 'decimal:2',
-            'is_featured' => 'boolean',
-            'is_active' => 'boolean',
-        ];
+        static::addGlobalScope('tour', fn (Builder $query) => $query->where('product_type', 'tour'));
+        static::creating(fn (Tour $tour) => $tour->product_type = 'tour');
     }
 
-    public function category(): BelongsTo
+    protected function services(): Attribute
     {
-        return $this->belongsTo(TourCategory::class, 'category_id');
+        return Attribute::get(function (): Collection {
+            $ids = $this->categoryIdList();
+
+            return $ids === []
+                ? collect()
+                : IncludedService::query()
+                    ->whereIn('id', $ids)
+                    ->orderBy('sort_order')
+                    ->get();
+        });
     }
 
-    public function destination(): BelongsTo
+    protected function itineraries(): Attribute
     {
-        return $this->belongsTo(Destination::class);
+        return Attribute::get(fn (): Collection => collect($this->itinerary_data ?? [])
+            ->map(fn (array $item) => (object) $item));
     }
 
-    public function image(): BelongsTo
+    protected function excludedItems(): Attribute
     {
-        return $this->belongsTo(Media::class, 'image_id');
-    }
-
-    public function itineraries(): HasMany
-    {
-        return $this->hasMany(TourItinerary::class)
-            ->orderBy('sort_order')
-            ->orderBy('day_number');
-    }
-
-    public function services(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            IncludedService::class,
-            'tour_service_assignments',
-            'tour_id',
-            'tour_service_id',
-        )
-            ->withTimestamps()
-            ->orderBy('tour_services.sort_order');
-    }
-
-    public function excludedItems(): HasMany
-    {
-        return $this->hasMany(TourExcludedItem::class)->orderBy('sort_order');
-    }
-
-    public function consultations(): HasMany
-    {
-        return $this->hasMany(ConsultationRequest::class);
+        return Attribute::get(fn (): Collection => collect($this->excluded_items ?? [])
+            ->map(fn (array $item) => (object) $item));
     }
 }

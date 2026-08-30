@@ -3,18 +3,44 @@
 @section('title', 'Dental Tour | Việt Nam theo nhịp riêng')
 
 @section('content')
-    <section class="grain ink-contrast relative flex min-h-screen items-center justify-center overflow-hidden bg-ink text-white">
-        <div class="absolute inset-0 scale-105 bg-cover bg-center opacity-80" style="background-image: url('https://picsum.photos/seed/vietnam-coast-journey/1920/1080')"></div>
+    @php($editorMode = $editorMode ?? false)
+    @php($heroImage = $settings['landing_hero_image'] ?? 'https://picsum.photos/seed/vietnam-coast-journey/1920/1080')
+    @php($heroEyebrow = $settings['landing_hero_eyebrow'] ?? 'Những hành trình có chiều sâu')
+    @php($heroTitleLine1 = $settings['landing_hero_title_line_1'] ?? 'Việt Nam rộng mở.')
+    @php($heroTitleBeforeImage = $settings['landing_hero_title_before_image'] ?? 'Bạn đi theo')
+    @php($heroTitleAfterImage = $settings['landing_hero_title_after_image'] ?? 'nhịp riêng.')
+    @php($heroDescription = $settings['landing_hero_description'] ?? 'Từ bờ biển miền Trung đến những thị trấn di sản, mỗi chuyến đi được thiết kế để bạn thật sự sống trong điểm đến.')
+
+    @if($editorMode)
+        <div class="fixed inset-x-0 bottom-5 z-[90] flex justify-center px-4">
+            <div class="flex items-center gap-2 rounded-full bg-white p-2 text-ink shadow-[0_20px_70px_rgba(5,24,20,0.3)]">
+                <span class="hidden px-3 text-xs font-semibold sm:block">Visual Editor đang bật</span>
+                <a href="{{ route('admin.dashboard') }}" class="rounded-full border border-ink/15 px-4 py-2 text-xs font-semibold transition-colors hover:bg-ink hover:text-white">Về CMS</a>
+                <a href="{{ route('home') }}" target="_blank" rel="noopener" class="rounded-full bg-ink px-4 py-2 text-xs font-semibold text-white">Xem website</a>
+            </div>
+        </div>
+    @endif
+
+    <section id="landing-hero" class="group/hero grain ink-contrast relative flex min-h-screen items-center justify-center overflow-hidden bg-ink text-white">
+        <div class="absolute inset-0 scale-105 bg-cover bg-center opacity-80" style="background-image: url('{{ $heroImage }}')"></div>
         <div class="hero-wash absolute inset-0"></div>
+        @if($editorMode)
+            <div class="pointer-events-none absolute inset-0 z-30 grid place-items-center bg-ink/20 opacity-0 transition-opacity duration-300 group-hover/hero:opacity-100">
+                <div class="pointer-events-auto flex flex-wrap justify-center gap-3">
+                    <button data-visual-editor-open="edit-hero" type="button" class="accent-contrast rounded-full bg-coral px-5 py-3 text-sm font-semibold shadow-xl">Sửa hero</button>
+                </div>
+            </div>
+            @include('admin.landing-editor.hero-dialog')
+        @endif
         <div class="relative mx-auto flex w-full max-w-[100rem] flex-col items-center px-6 pb-20 pt-36 text-center md:px-10 md:pt-44">
             <div class="overflow-hidden">
-                <p data-hero-line class="text-xs font-semibold uppercase tracking-[0.28em] text-white/70">Những hành trình có chiều sâu</p>
+                <p data-hero-line class="text-xs font-semibold uppercase tracking-[0.28em] text-white/70">{{ $heroEyebrow }}</p>
             </div>
             <h1 class="display-type mt-8 max-w-6xl font-semibold">
-                <span class="block overflow-hidden"><span data-hero-line class="block">Việt Nam rộng mở.</span></span>
-                <span class="block overflow-hidden"><span data-hero-line class="block">Bạn đi theo <span class="inline-journey-image" style="background-image: url('https://picsum.photos/seed/hoi-an-lantern/480/240')"></span> nhịp riêng.</span></span>
+                <span class="block overflow-hidden"><span data-hero-line class="block">{{ $heroTitleLine1 }}</span></span>
+                <span class="block overflow-hidden"><span data-hero-line class="block">{{ $heroTitleBeforeImage }} <span class="inline-journey-image" style="background-image: url('https://picsum.photos/seed/hoi-an-lantern/480/240')"></span> {{ $heroTitleAfterImage }}</span></span>
             </h1>
-            <p data-hero-action class="mt-8 max-w-2xl text-base leading-7 text-white/72 md:text-xl md:leading-8">Từ bờ biển miền Trung đến những thị trấn di sản, mỗi chuyến đi được thiết kế để bạn thật sự sống trong điểm đến.</p>
+            <p data-hero-action class="mt-8 max-w-2xl text-base leading-7 text-white/72 md:text-xl md:leading-8">{{ $heroDescription }}</p>
             <div data-hero-action class="mt-10 flex flex-col gap-3 sm:flex-row">
                 <a href="{{ route('tours.index') }}" class="accent-contrast rounded-full bg-coral px-8 py-4 font-semibold transition-transform hover:scale-105">Khám phá hành trình</a>
                 <a href="#consultation" class="rounded-full border border-white/45 bg-white/10 px-8 py-4 font-semibold text-white backdrop-blur transition-colors hover:bg-white hover:text-ink">Thiết kế tour riêng</a>
@@ -33,9 +59,10 @@
             @php($featuredDestinations = $destinations->take(3)->values())
             <div class="mt-16 grid grid-flow-dense auto-rows-[16rem] grid-cols-1 gap-3 md:grid-cols-12 md:auto-rows-[18rem]">
                 @foreach($featuredDestinations as $index => $destination)
-                    <a href="{{ route('tours.index') }}" data-motion-card class="group relative overflow-hidden bg-forest {{ $index === 0 ? 'md:col-span-7 md:row-span-2' : 'md:col-span-5 md:row-span-1' }}">
+                    <article data-motion-card class="group relative overflow-hidden bg-forest {{ $index === 0 ? 'md:col-span-7 md:row-span-2' : 'md:col-span-5 md:row-span-1' }}">
                         <div class="absolute inset-0 bg-cover bg-center grayscale-[20%] transition-transform duration-700 ease-out group-hover:scale-105" style="background-image: url('{{ $destination->image?->file_path ?: 'https://picsum.photos/seed/'.urlencode($destination->slug).'/1200/900' }}')"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/10 to-transparent"></div>
+                        <a href="{{ route('tours.index') }}" class="absolute inset-0 z-10 {{ $editorMode ? 'pointer-events-none' : '' }}" aria-label="Xem tour tại {{ $destination->name }}"></a>
                         <div class="absolute inset-x-0 bottom-0 flex items-end justify-between gap-5 p-7 text-white md:p-9">
                             <div>
                                 <h3 class="text-3xl font-semibold tracking-[-0.04em] md:text-4xl">{{ $destination->name }}</h3>
@@ -43,27 +70,51 @@
                             </div>
                             <span class="text-sm font-medium">Xem tour</span>
                         </div>
-                    </a>
+                        @if($editorMode)
+                            <div class="absolute right-4 top-4 z-30 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                                <button data-visual-editor-open="edit-destination-{{ $destination->id }}" type="button" class="accent-contrast rounded-full bg-coral px-4 py-2 text-xs font-semibold shadow-xl">Sửa</button>
+                            </div>
+                            @include('admin.landing-editor.destination-dialog', ['destination' => $destination])
+                        @endif
+                    </article>
                 @endforeach
             </div>
         </div>
     </section>
 
-    <section class="ink-contrast bg-ink px-5 py-32 text-white md:px-10 md:py-48">
+    <section id="featured-tours" class="ink-contrast bg-ink px-5 py-32 text-white md:px-10 md:py-48">
         <div class="mx-auto max-w-[90rem]">
-            <div class="grid gap-10 lg:grid-cols-[0.75fr_1.25fr]">
-                <div class="lg:sticky lg:top-36 lg:self-start">
+            <div class="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+                <div>
                     <p class="text-sm font-medium text-coral">Hành trình được yêu thích</p>
-                    <h2 class="chapter-title mt-5 max-w-xl font-semibold">Đi ít hơn. Cảm nhận nhiều hơn.</h2>
-                    <a href="{{ route('tours.index') }}" class="mt-10 inline-flex border-b border-white pb-2 text-sm font-semibold text-white transition-colors hover:border-coral hover:text-coral">Xem toàn bộ tour</a>
+                    <h2 class="chapter-title mt-5 max-w-4xl font-semibold">Đi ít hơn. Cảm nhận nhiều hơn.</h2>
                 </div>
-                <div class="space-y-8 pb-24">
-                    @foreach($featuredTours as $index => $tour)
-                        <div class="tour-stack-card" style="--stack-offset: {{ 7 + ($index * 1.15) }}rem">
-                            @include('tours._card', ['tour' => $tour, 'stacked' => true])
-                        </div>
-                    @endforeach
+                <div class="lg:justify-self-end">
+                    <p class="max-w-lg text-base leading-7 text-white/55">Những trải nghiệm được sắp theo một nhịp thoáng hơn để bạn dễ so sánh, chọn lựa và bắt đầu hành trình.</p>
+                    <a href="{{ route('tours.index') }}" class="mt-7 inline-flex border-b border-white pb-2 text-sm font-semibold text-white transition-colors hover:border-coral hover:text-coral">Xem toàn bộ tour</a>
                 </div>
+            </div>
+
+            <div data-tour-zigzag-grid class="mt-20 grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-x-8 md:gap-y-12 lg:gap-x-10 lg:gap-y-14">
+                @foreach($featuredTours as $index => $tour)
+                    <div @class([
+                        'min-w-0 md:col-span-6 lg:col-span-5',
+                        'lg:col-start-1' => $index % 2 === 0,
+                        'lg:col-start-7 lg:pt-16' => $index % 2 === 1,
+                    ])>
+                        @include('tours._card', ['tour' => $tour, 'editorMode' => $editorMode])
+                    </div>
+                @endforeach
+                @if($editorMode)
+                    @php($createTourIndex = $featuredTours->count())
+                    <div @class([
+                        'min-w-0 md:col-span-6 lg:col-span-5',
+                        'lg:col-start-1' => $createTourIndex % 2 === 0,
+                        'lg:col-start-7 lg:pt-16' => $createTourIndex % 2 === 1,
+                    ])>
+                        @include('admin.landing-editor.tour-create')
+                    </div>
+                @endif
             </div>
         </div>
     </section>
@@ -79,24 +130,40 @@
         </div>
     </section>
 
-    <section class="bg-cream px-5 py-32 md:px-10 md:py-48">
+    <section id="destination-priority" class="bg-cream px-5 py-32 md:px-10 md:py-48">
         <div class="mx-auto max-w-[90rem]">
             <div class="flex flex-col justify-between gap-8 md:flex-row md:items-end">
                 <h2 class="chapter-title max-w-4xl font-semibold">Năm sắc thái.<br>Một Việt Nam.</h2>
                 <p class="max-w-sm text-base leading-7 text-ink/55">Chạm hoặc rê chuột để mở rộng từng điểm đến và tìm nhịp điệu phù hợp với bạn.</p>
             </div>
-            <div class="destination-accordion mt-16 flex h-[38rem] overflow-hidden border border-ink/15 bg-ink">
+            @if($editorMode)
+                <div class="mt-8 flex items-center gap-3 text-sm text-ink/55">
+                    <span class="grid size-8 place-items-center border border-ink/15 bg-white" aria-hidden="true">↕</span>
+                    Kéo các block bên dưới để thay đổi độ ưu tiên hiển thị.
+                    <span data-destination-sort-status class="font-semibold text-forest"></span>
+                </div>
+                <form data-destination-sort-form action="{{ route('admin.landing-editor.destinations.reorder') }}" class="hidden">@csrf @method('PUT')</form>
+            @endif
+            <div data-destination-sort-list class="destination-accordion mt-16 flex h-[38rem] overflow-hidden border border-ink/15 bg-ink">
                 @foreach($destinations as $destination)
-                    <a href="{{ route('tours.index') }}" class="destination-panel group relative min-w-0 overflow-hidden border-r border-white/15 last:border-r-0">
+                    <article data-destination-sort-item="{{ $destination->id }}" @if($editorMode) draggable="true" @endif class="destination-panel group relative min-w-0 overflow-hidden border-r border-white/15 last:border-r-0 {{ $editorMode ? 'cursor-grab active:cursor-grabbing' : '' }}">
                         <div class="absolute inset-0 bg-cover bg-center opacity-75 grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0" style="background-image: url('{{ $destination->image?->file_path ?: 'https://picsum.photos/seed/'.urlencode($destination->slug).'/1000/1200' }}')"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/10 to-transparent"></div>
+                        <a href="{{ route('tours.index') }}" class="absolute inset-0 z-10 {{ $editorMode ? 'pointer-events-none' : '' }}" aria-label="Xem tour tại {{ $destination->name }}"></a>
                         <div class="absolute inset-x-0 bottom-0 p-6 text-white md:p-8">
                             <h3 class="text-2xl font-semibold tracking-[-0.04em] [writing-mode:horizontal-tb]">{{ $destination->name }}</h3>
                             <p class="mt-3 max-h-0 overflow-hidden text-sm leading-6 text-white/65 opacity-0 transition-all duration-500 group-hover:max-h-24 group-hover:opacity-100">{{ $destination->short_description }}</p>
                         </div>
-                    </a>
+                        @if($editorMode)
+                            <button data-visual-editor-open="edit-destination-accordion-{{ $destination->id }}" type="button" class="accent-contrast absolute right-4 top-4 z-30 rounded-full bg-coral px-4 py-2 text-xs font-semibold opacity-0 shadow-xl transition-opacity group-hover:opacity-100">Sửa</button>
+                            @include('admin.landing-editor.destination-dialog', ['destination' => $destination, 'panelId' => 'edit-destination-accordion-'.$destination->id])
+                        @endif
+                    </article>
                 @endforeach
             </div>
+            @if($editorMode)
+                @include('admin.landing-editor.destination-create')
+            @endif
         </div>
     </section>
 

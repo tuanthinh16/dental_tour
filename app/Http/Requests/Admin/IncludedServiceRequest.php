@@ -26,7 +26,7 @@ class IncludedServiceRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('tour_services')->ignore($id),
+                Rule::unique('categories')->ignore($id),
             ],
             'description' => ['nullable', 'string'],
             'sort_order' => ['required', 'integer', 'min:0'],

@@ -18,13 +18,17 @@ class PublicTourTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee('Việt Nam')
-            ->assertSee('Dịch vụ trong gói')
-            ->assertSee('Đưa đón sân bay')
+            ->assertSee('Tour cano 3–4 đảo Phú Quốc')
+            ->assertSee('Cầu Hôn, show đêm &amp; pháo hoa', false)
+            ->assertSee('data-tour-zigzag-grid', false)
+            ->assertDontSee('tour-stack-card', false)
             ->assertSee('Đánh giá từ người đã trải nghiệm');
         $this->get('/tours')
             ->assertOk()
-            ->assertSee('Dịch vụ trong gói')
-            ->assertSee('Bữa sáng');
+            ->assertSee('Hòn Thơm: Cáp treo &amp; công viên nước', false)
+            ->assertSee('Grand World Phú Quốc')
+            ->assertSee('data-tour-zigzag-grid', false)
+            ->assertSee('Liên hệ');
         $this->get('/tours/'.$tour->slug)
             ->assertOk()
             ->assertSee($tour->name);

@@ -34,6 +34,112 @@ document.querySelectorAll('[data-service-picker]').forEach((picker) => {
     syncServiceSummary();
 });
 
+document.querySelectorAll('[data-product-picker]').forEach((picker) => {
+    const summary = picker.querySelector('[data-product-summary]');
+    const options = [...picker.querySelectorAll('[data-product-option]')];
+
+    const syncProductSummary = () => {
+        const selectedCount = options.filter((option) => option.checked).length;
+        summary.textContent = selectedCount ? `${selectedCount} sản phẩm đã chọn` : 'Chọn sản phẩm';
+    };
+
+    options.forEach((option) => option.addEventListener('change', syncProductSummary));
+    syncProductSummary();
+});
+
+document.querySelectorAll('[data-image-input]').forEach((input) => {
+    input.addEventListener('change', () => {
+        const file = input.files?.[0];
+        const preview = input.closest('label')?.querySelector('[data-image-preview]');
+        if (!file || !preview) return;
+
+        const image = new Image();
+        const objectUrl = URL.createObjectURL(file);
+        image.src = objectUrl;
+        image.alt = 'Ảnh xem trước';
+        image.className = 'h-full w-full object-cover';
+        image.addEventListener('load', () => URL.revokeObjectURL(objectUrl), { once: true });
+        preview.replaceChildren(image);
+    });
+});
+
+document.querySelectorAll('[data-visual-editor-open]').forEach((button) => {
+    button.addEventListener('click', () => {
+        const panel = document.getElementById(button.dataset.visualEditorOpen);
+        if (!panel) return;
+
+        panel.hidden = false;
+        panel.closest('[draggable="true"]')?.setAttribute('draggable', 'false');
+        button.setAttribute('aria-expanded', 'true');
+        panel.querySelector('input, textarea, select')?.focus();
+    });
+});
+
+document.querySelectorAll('[data-visual-editor-close]').forEach((button) => {
+    button.addEventListener('click', () => {
+        const panel = button.closest('[data-visual-editor-panel]');
+        if (!panel) return;
+
+        panel.hidden = true;
+        panel.closest('[data-destination-sort-item]')?.setAttribute('draggable', 'true');
+        document.querySelector(`[data-visual-editor-open="${panel.id}"]`)?.setAttribute('aria-expanded', 'false');
+    });
+});
+
+const destinationSortList = document.querySelector('[data-destination-sort-list]');
+const destinationSortForm = document.querySelector('[data-destination-sort-form]');
+const destinationSortStatus = document.querySelector('[data-destination-sort-status]');
+
+if (destinationSortList && destinationSortForm) {
+    let draggedDestination = null;
+
+    destinationSortList.addEventListener('dragstart', (event) => {
+        draggedDestination = event.target.closest('[data-destination-sort-item]');
+        if (!draggedDestination) return;
+
+        draggedDestination.classList.add('opacity-45');
+        event.dataTransfer.effectAllowed = 'move';
+    });
+
+    destinationSortList.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        const target = event.target.closest('[data-destination-sort-item]');
+        if (!draggedDestination || !target || target === draggedDestination) return;
+
+        const bounds = target.getBoundingClientRect();
+        const isVertical = window.innerWidth < 768;
+        const insertAfter = isVertical
+            ? event.clientY > bounds.top + bounds.height / 2
+            : event.clientX > bounds.left + bounds.width / 2;
+        destinationSortList.insertBefore(draggedDestination, insertAfter ? target.nextSibling : target);
+    });
+
+    destinationSortList.addEventListener('dragend', async () => {
+        if (!draggedDestination) return;
+
+        draggedDestination.classList.remove('opacity-45');
+        draggedDestination = null;
+        const data = new FormData(destinationSortForm);
+        destinationSortList.querySelectorAll('[data-destination-sort-item]').forEach((item) => {
+            data.append('destination_ids[]', item.dataset.destinationSortItem);
+        });
+
+        if (destinationSortStatus) destinationSortStatus.textContent = 'Đang lưu...';
+
+        try {
+            const response = await fetch(destinationSortForm.action, {
+                method: 'POST',
+                body: data,
+                headers: { Accept: 'application/json' },
+            });
+            if (!response.ok) throw new Error('Không thể lưu thứ tự');
+            if (destinationSortStatus) destinationSortStatus.textContent = 'Đã lưu';
+        } catch {
+            if (destinationSortStatus) destinationSortStatus.textContent = 'Lưu thất bại, hãy thử lại';
+        }
+    });
+}
+
 if (!reducedMotion) {
     const heroLines = document.querySelectorAll('[data-hero-line]');
     const heroActions = document.querySelectorAll('[data-hero-action]');
@@ -73,20 +179,32 @@ if (!reducedMotion) {
         });
     });
 
-    document.querySelectorAll('.tour-stack-card').forEach((card, index, cards) => {
-        if (index === cards.length - 1) return;
-
-        gsap.to(card, {
-            scale: 0.92 + index * 0.012,
-            opacity: 0.42,
-            ease: 'none',
-            scrollTrigger: {
-                trigger: cards[index + 1],
-                start: 'top 82%',
-                end: 'top 26%',
-                scrub: true,
-            },
+    document.querySelectorAll('[data-tour-card]').forEach((card, index) => {
+        gsap.from(card, {
+            y: index % 2 === 0 ? 48 : 82,
+            opacity: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            scrollTrigger: { trigger: card, start: 'top 90%' },
         });
+
+        const image = card.querySelector('[data-tour-card-image]');
+        if (!image) return;
+
+        gsap.fromTo(
+            image,
+            { scale: 0.94 },
+            {
+                scale: 1,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 92%',
+                    end: 'top 38%',
+                    scrub: 1,
+                },
+            },
+        );
     });
 
     document.querySelectorAll('[data-motion-card]').forEach((card) => {
@@ -158,6 +276,11 @@ if (themeForm && themePreview) {
         Manrope: "'Manrope', ui-sans-serif, system-ui, sans-serif",
         'DM Sans': "'DM Sans', ui-sans-serif, system-ui, sans-serif",
         'Playfair Display': "'Playfair Display', ui-serif, Georgia, serif",
+
+        // Thêm 2026-08-30: đồng bộ font preview với bộ typography mặc định mới.
+        'Be Vietnam Pro': "'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif",
+        Lora: "'Lora', ui-serif, Georgia, serif",
+        Inter: "'Inter', ui-sans-serif, system-ui, sans-serif",
     };
 
     const contrastText = (hex) => {

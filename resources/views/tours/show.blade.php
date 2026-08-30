@@ -8,7 +8,7 @@
         <div class="absolute inset-0 bg-cover bg-center opacity-75" style="background-image: url('{{ $tour->image?->file_path ?: 'https://picsum.photos/seed/'.urlencode($tour->slug).'/1920/1080' }}')"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/10"></div>
         <div class="relative mx-auto w-full max-w-[90rem]">
-            <p class="text-sm font-medium text-coral">{{ $tour->destination?->name }} / {{ $tour->category?->name }}</p>
+            <p class="text-sm font-medium text-coral">{{ $tour->destination?->name }} / Tour trải nghiệm</p>
             <h1 class="display-type mt-6 max-w-6xl font-semibold">{{ $tour->name }}</h1>
             <div class="mt-10 grid gap-8 border-t border-white/25 pt-8 md:grid-cols-[1fr_auto_auto] md:items-end">
                 <p class="max-w-2xl text-lg leading-8 text-white/65">{{ $tour->short_description }}</p>
@@ -18,7 +18,7 @@
                 </div>
                 <div>
                     <p class="text-xs text-white/45">Giá từ</p>
-                    <p class="mt-2 text-3xl font-semibold text-coral">{{ number_format((float) $tour->base_price, 0, ',', '.') }} {{ $tour->currency }}</p>
+                    <p class="mt-2 text-3xl font-semibold text-coral">{{ \App\Support\MoneyFormatter::format($tour->base_price, $tour->currency) }}</p>
                 </div>
             </div>
         </div>

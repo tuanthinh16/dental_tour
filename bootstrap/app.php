@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             "permission" =>
                 \App\Http\Middleware\EnsureAdminHasPermission::class,
         ]);
+        $middleware->trustProxies(at: '*');
         $middleware->encryptCookies(except: ["admin_token"]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

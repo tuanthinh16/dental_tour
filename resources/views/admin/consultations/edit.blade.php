@@ -1,1 +1,47 @@
-@extends('layouts.admin') @section('title','Xử lý yêu cầu') @section('content')<h1 class="text-3xl font-black text-brand-900">Xử lý yêu cầu #{{ $item->id }}</h1><div class="mt-7 grid gap-7 lg:grid-cols-2"><div class="rounded-2xl bg-white p-7 shadow-sm"><dl class="grid grid-cols-[130px_1fr] gap-4 text-sm"><dt class="text-slate-500">Khách hàng</dt><dd class="font-bold">{{ $item->full_name }}</dd><dt class="text-slate-500">Email</dt><dd>{{ $item->email }}</dd><dt class="text-slate-500">Điện thoại</dt><dd>{{ $item->phone }}</dd><dt class="text-slate-500">Quốc gia</dt><dd>{{ $item->country ?? '—' }}</dd><dt class="text-slate-500">Tour</dt><dd>{{ $item->tour?->name ?? '—' }}</dd><dt class="text-slate-500">Ngày đi</dt><dd>{{ $item->travel_date?->format('d/m/Y') ?? '—' }}</dd><dt class="text-slate-500">Số người</dt><dd>{{ $item->number_of_people ?? '—' }}</dd></dl></div><form method="post" action="{{ route('admin.consultations.update',$item) }}" class="rounded-2xl bg-white p-7 shadow-sm">@csrf @method('PUT')<label class="text-sm font-bold">Trạng thái<select name="status" class="mt-2 w-full rounded-xl border p-3">@foreach(\App\Models\ConsultationRequest::STATUSES as $status)<option @selected(old('status',$item->status)===$status)>{{ $status }}</option>@endforeach</select></label><label class="mt-5 block text-sm font-bold">Nội dung khách gửi<textarea name="message" rows="7" class="mt-2 w-full rounded-xl border p-3">{{ old('message',$item->message) }}</textarea></label><button class="mt-5 rounded-xl bg-brand-600 px-6 py-3 font-bold text-white">Cập nhật</button></form></div>@endsection
+@extends('layouts.admin')
+
+@section('title', 'Xử lý yêu cầu tư vấn')
+
+@section('content')
+    <div>
+        <p class="text-sm font-semibold text-brand-600">Khách hàng</p>
+        <h1 class="mt-2 max-w-5xl text-4xl font-semibold tracking-[-0.05em] text-ink md:text-6xl">Yêu cầu từ {{ $item->full_name }}</h1>
+    </div>
+    <div class="mt-10 grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+        <section class="bg-ink p-7 text-white shadow-[0_24px_70px_rgba(5,24,20,0.16)] md:p-9">
+            <dl class="grid gap-6 text-sm">
+                @foreach([
+                    'Email' => $item->email,
+                    'Điện thoại' => $item->phone,
+                    'Quốc gia' => $item->country ?? 'Chưa cung cấp',
+                    'Tour' => $item->tour?->name ?? 'Chưa chọn tour',
+                    'Ngày đi' => $item->travel_date?->format('d/m/Y') ?? 'Chưa chọn',
+                    'Số người' => $item->number_of_people ?? 'Chưa cung cấp',
+                ] as $label => $value)
+                    <div>
+                        <dt class="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/40">{{ $label }}</dt>
+                        <dd class="mt-2 font-semibold text-white">{{ $value }}</dd>
+                    </div>
+                @endforeach
+            </dl>
+        </section>
+        <form method="post" action="{{ route('admin.consultations.update', $item) }}" class="bg-white p-7 shadow-[0_24px_70px_rgba(5,24,20,0.1)] md:p-9">
+            @csrf
+            @method('PUT')
+            <label class="text-sm font-semibold text-ink">Trạng thái
+                <select name="status" class="mt-3 w-full border border-ink/15 bg-cream px-4 py-3 font-normal outline-none focus:border-brand-500">
+                    @foreach(AppModelsConsultationRequest::STATUSES as $status)
+                        <option @selected(old('status', $item->status) === $status)>{{ $status }}</option>
+                    @endforeach
+                </select>
+            </label>
+            <label class="mt-6 block text-sm font-semibold text-ink">Nội dung khách gửi
+                <textarea name="message" rows="8" class="mt-3 w-full border border-ink/15 bg-cream px-4 py-3 font-normal outline-none focus:border-brand-500">{{ old('message', $item->message) }}</textarea>
+            </label>
+            <div class="mt-8 flex flex-wrap gap-3">
+                <button class="accent-contrast rounded-full bg-coral px-6 py-3 text-sm font-semibold transition-transform hover:scale-105">Cập nhật</button>
+                <a href="{{ route('admin.consultations.index') }}" class="rounded-full border border-ink/20 px-6 py-3 text-sm font-semibold text-ink transition-colors hover:bg-ink hover:text-white">Quay lại</a>
+            </div>
+        </form>
+    </div>
+@endsection

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\IncludedServiceRequest;
 use App\Models\IncludedService;
+use App\Models\Tour;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -21,6 +22,7 @@ class IncludedServiceController extends Controller
                 'is_active' => 'Hoạt động',
             ],
             'route' => 'included-services',
+            'createFields' => $this->fields(),
         ]);
     }
 
@@ -32,7 +34,7 @@ class IncludedServiceController extends Controller
     public function store(IncludedServiceRequest $request)
     {
         $service = IncludedService::create($request->validated());
-        Log::info('Admin included service created', ['tour_service_id' => $service->id]);
+        Log::info('Admin product category created', ['category_id' => $service->id]);
 
         return redirect()
             ->route('admin.included-services.index')
@@ -47,7 +49,7 @@ class IncludedServiceController extends Controller
     public function update(IncludedServiceRequest $request, IncludedService $includedService)
     {
         $includedService->update($request->validated());
-        Log::info('Admin included service updated', ['tour_service_id' => $includedService->id]);
+        Log::info('Admin product category updated', ['category_id' => $includedService->id]);
 
         return redirect()
             ->route('admin.included-services.index')
@@ -57,10 +59,17 @@ class IncludedServiceController extends Controller
     public function destroy(IncludedService $includedService)
     {
         DB::transaction(function () use ($includedService): void {
-            $includedService->tours()->detach();
+            Tour::query()->get()->each(function (Tour $tour) use ($includedService): void {
+                if (in_array($includedService->id, $tour->categoryIdList(), true)) {
+                    $tour->syncCategoryIds(array_values(array_diff(
+                        $tour->categoryIdList(),
+                        [$includedService->id],
+                    )));
+                }
+            });
             $includedService->delete();
         });
-        Log::info('Admin included service deleted', ['tour_service_id' => $includedService->id]);
+        Log::info('Admin product category deleted', ['category_id' => $includedService->id]);
 
         return back()->with('success', 'Đã xóa dịch vụ.');
     }
@@ -71,12 +80,17 @@ class IncludedServiceController extends Controller
             'item' => $item,
             'title' => $title,
             'route' => 'included-services',
-            'fields' => [
-                'name' => ['label' => 'Tên dịch vụ', 'type' => 'text'],
-                'description' => ['label' => 'Mô tả', 'type' => 'textarea'],
-                'sort_order' => ['label' => 'Thứ tự', 'type' => 'number', 'default' => 0],
-                'is_active' => ['label' => 'Hoạt động', 'type' => 'checkbox', 'default' => 1],
-            ],
+            'fields' => $this->fields(),
         ]);
+    }
+
+    private function fields(): array
+    {
+        return [
+            'name' => ['label' => 'Tên dịch vụ', 'type' => 'text', 'required' => true],
+            'description' => ['label' => 'Mô tả', 'type' => 'textarea'],
+            'sort_order' => ['label' => 'Thứ tự', 'type' => 'number', 'default' => 0, 'required' => true],
+            'is_active' => ['label' => 'Hoạt động', 'type' => 'checkbox', 'default' => 1],
+        ];
     }
 }

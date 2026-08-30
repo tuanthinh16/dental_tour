@@ -1,31 +1,20 @@
 <?php
+
 namespace App\Models;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-class Destination extends Model
+
+class Destination extends Product
 {
-    use SoftDeletes;
-    protected $fillable = [
-        "name",
-        "slug",
-        "short_description",
-        "description",
-        "image_id",
-        "sort_order",
-        "is_active",
-    ];
-    protected function casts(): array
+    protected static function booted(): void
     {
-        return ["is_active" => "boolean"];
+        static::addGlobalScope('destination', fn (Builder $query) => $query->where('product_type', 'destination'));
+        static::creating(fn (Destination $destination) => $destination->product_type = 'destination');
     }
+
     public function tours(): HasMany
     {
-        return $this->hasMany(Tour::class);
-    }
-    public function image(): BelongsTo
-    {
-        return $this->belongsTo(Media::class, "image_id");
+        return $this->hasMany(Tour::class, 'destination_id');
     }
 }

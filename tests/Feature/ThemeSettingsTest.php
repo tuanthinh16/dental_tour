@@ -23,6 +23,12 @@ class ThemeSettingsTest extends TestCase
         $this->assertSame(ThemeOptions::DEFAULTS['ui_color_primary'], $theme['ui_color_primary']);
         $this->assertSame(ThemeOptions::DEFAULTS['ui_font_title'], $theme['ui_font_title']);
         $this->assertSame('#0B1F1B', $theme['ui_color_accent_contrast']);
+        $this->assertSame('Be Vietnam Pro', ThemeOptions::DEFAULTS['ui_font_header']);
+        $this->assertSame('Lora', ThemeOptions::DEFAULTS['ui_font_title']);
+        $this->assertSame('Inter', ThemeOptions::DEFAULTS['ui_font_body']);
+        $this->assertStringContainsString('Be Vietnam Pro', $theme['ui_font_header_stack']);
+        $this->assertStringContainsString('Lora', $theme['ui_font_title_stack']);
+        $this->assertStringContainsString('Inter', $theme['ui_font_body_stack']);
     }
 
     public function test_super_admin_can_update_theme_settings(): void
@@ -41,7 +47,10 @@ class ThemeSettingsTest extends TestCase
             ->assertSee('Giao diện website')
             ->assertSee('Xem trước website')
             ->assertSee('data-theme-preview-modal', false)
-            ->assertSee('data-font-preview="ui_font_header"', false);
+            ->assertSee('data-font-preview="ui_font_header"', false)
+            ->assertSee('data-default="Be Vietnam Pro"', false)
+            ->assertSee('data-default="Lora"', false)
+            ->assertSee('data-default="Inter"', false);
 
         $payload = array_merge(ThemeOptions::DEFAULTS, [
             'ui_color_primary' => '#204E45',

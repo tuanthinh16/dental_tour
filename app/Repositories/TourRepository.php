@@ -10,16 +10,12 @@ class TourRepository
 {
     private array $relations = [
         'destination',
-        'category',
         'image',
-        'itineraries',
-        'services',
-        'excludedItems',
     ];
 
     public function featured(int $limit = 6): Collection
     {
-        return Tour::with(['destination', 'image', 'services'])
+        return Tour::with(['destination', 'image'])
             ->where('is_active', true)
             ->where('is_featured', true)
             ->orderBy('sort_order')
@@ -29,7 +25,7 @@ class TourRepository
 
     public function activePaginated(int $perPage = 12): LengthAwarePaginator
     {
-        return Tour::with(['destination', 'category', 'image', 'services'])
+        return Tour::with(['destination', 'image'])
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->paginate($perPage);
@@ -45,7 +41,7 @@ class TourRepository
 
     public function paginate(int $perPage = 15): LengthAwarePaginator
     {
-        return Tour::with(['destination', 'category'])
+        return Tour::with(['destination'])
             ->orderBy('sort_order')
             ->paginate($perPage);
     }

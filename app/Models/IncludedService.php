@@ -3,29 +3,47 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 class IncludedService extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'tour_services';
+    protected $table = 'categories';
 
-    protected $fillable = ['name', 'description', 'sort_order', 'is_active'];
+    protected $fillable = [
+        'category_code',
+        'name',
+        'description',
+        'sort_order',
+        'is_active',
+    ];
 
     protected function casts(): array
     {
         return ['is_active' => 'boolean'];
     }
 
-    public function tours(): BelongsToMany
+    protected static function booted(): void
     {
-        return $this->belongsToMany(
-            Tour::class,
-            'tour_service_assignments',
-            'tour_service_id',
-            'tour_id',
-        )->withTimestamps();
+        static::creating(function (IncludedService $service): void {
+            if (blank($service->category_code)) {
+                $service->category_code = static::uniqueCode($service->name);
+            }
+        });
+    }
+
+    private static function uniqueCode(string $name): string
+    {
+        $base = Str::upper(Str::slug($name, '_')) ?: 'SERVICE';
+        $code = $base;
+        $suffix = 2;
+
+        while (static::withTrashed()->where('category_code', $code)->exists()) {
+            $code = $base.'_'.$suffix++;
+        }
+
+        return $code;
     }
 }
