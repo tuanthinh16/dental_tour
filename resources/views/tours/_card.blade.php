@@ -1,5 +1,7 @@
 @php($editorMode = $editorMode ?? false)
 @php($includedServices = $tour->services->where('is_active', true)->take(5))
+@php($tourName = $tour->translated('name'))
+@php($tourDescription = $tour->translated('short_description'))
 @php($hasPrice = (float) $tour->base_price > 0)
 @php($isDark = ($tone ?? 'light') === 'dark')
 
@@ -26,7 +28,7 @@
                                 <span class="grid size-5 shrink-0 place-items-center rounded-full bg-white/12" aria-hidden="true">
                                     <svg viewBox="0 0 20 20" class="size-3 fill-none stroke-current" stroke-width="2"><path d="m5 10 3 3 7-7" /></svg>
                                 </span>
-                                {{ $service->name }}
+                                {{ $service->translated('name') }}
                             </li>
                         @endforeach
                     </ul>
@@ -50,18 +52,18 @@
                 ])>
                     <span>{{ $tour->destination?->name ?: 'Việt Nam' }}</span>
                     <span @class(['h-px flex-1', 'bg-white/20' => $isDark, 'bg-ink/12' => ! $isDark])></span>
-                    <span>{{ $tour->duration_days ?: 1 }} ngày</span>
+                    <span>{{ __('site.tour.days', ['count' => $tour->duration_days ?: 1]) }}</span>
                 </div>
-                <h3 class="mt-7 max-w-xl text-4xl font-semibold leading-[1.02] tracking-[-0.045em] md:text-5xl">{{ $tour->name }}</h3>
+                <h3 class="mt-7 max-w-xl text-4xl font-semibold leading-[1.02] tracking-[-0.045em] md:text-5xl">{{ $tourName }}</h3>
                 <p @class([
                     'mt-6 max-w-lg text-sm leading-6 md:text-base md:leading-7',
                     'text-white/60' => $isDark,
                     'text-ink/55' => ! $isDark,
-                ])>{{ $tour->short_description }}</p>
+                ])>{{ $tourDescription }}</p>
                 @if($includedServices->isNotEmpty())
                     <div class="mt-5 md:hidden">
-                        <p @class(['text-xs font-semibold', 'text-coral' => $isDark, 'text-forest' => ! $isDark])>Dịch vụ trong gói</p>
-                        <p @class(['mt-2 line-clamp-2 text-sm leading-6', 'text-white/60' => $isDark, 'text-ink/55' => ! $isDark])>{{ $includedServices->pluck('name')->join(' · ') }}</p>
+                        <p @class(['text-xs font-semibold', 'text-coral' => $isDark, 'text-forest' => ! $isDark])>{{ __('site.tour.included_services') }}</p>
+                        <p @class(['mt-2 line-clamp-2 text-sm leading-6', 'text-white/60' => $isDark, 'text-ink/55' => ! $isDark])>{{ $includedServices->map(fn ($service) => $service->translated('name'))->join(' · ') }}</p>
                     </div>
                 @endif
             </div>
@@ -71,10 +73,10 @@
                 'border-ink/12' => ! $isDark,
             ])>
                 <div>
-                    <span @class(['text-xs', 'text-white/45' => $isDark, 'text-ink/45' => ! $isDark])>{{ $hasPrice ? 'Giá từ' : 'Giá dịch vụ' }}</span>
-                    <div class="mt-1 text-xl font-semibold">{{ $hasPrice ? \App\Support\MoneyFormatter::format($tour->base_price, $tour->currency) : 'Liên hệ' }}</div>
+                    <span @class(['text-xs', 'text-white/45' => $isDark, 'text-ink/45' => ! $isDark])>{{ $hasPrice ? __('site.tour.from_price') : __('site.tour.service_price') }}</span>
+                    <div class="mt-1 text-xl font-semibold">{{ $hasPrice ? \App\Support\MoneyFormatter::format($tour->base_price, $tour->currency) : __('site.tour.contact') }}</div>
                 </div>
-                <span class="flex items-center gap-2 text-sm font-semibold">Xem chi tiết <span aria-hidden="true">↗</span></span>
+                <span class="flex items-center gap-2 text-sm font-semibold">{{ __('site.tour.details') }} <span aria-hidden="true">↗</span></span>
             </div>
         </div>
     </a>

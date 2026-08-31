@@ -54,15 +54,16 @@ class LandingEditorController extends Controller
 
     public function updateHeroImage(LandingHeroImageRequest $request)
     {
+        $suffix = app()->getLocale() === 'vi' ? '' : '_'.app()->getLocale();
         $settingValues = [
-            'landing_hero_eyebrow' => $request->validated('eyebrow'),
-            'landing_hero_title_line_1' => $request->validated('title_line_1'),
-            'landing_hero_title_before_image' => $request->validated('title_before_image'),
-            'landing_hero_title_after_image' => $request->validated('title_after_image'),
-            'landing_hero_description' => $request->validated('description'),
+            'landing_hero_eyebrow'.$suffix => $request->validated('eyebrow'),
+            'landing_hero_title_line_1'.$suffix => $request->validated('title_line_1'),
+            'landing_hero_title_before_image'.$suffix => $request->validated('title_before_image'),
+            'landing_hero_title_after_image'.$suffix => $request->validated('title_after_image'),
+            'landing_hero_description'.$suffix => $request->validated('description'),
         ];
 
-        if ($request->hasFile('image')) {
+        if (app()->getLocale() === 'vi' && $request->hasFile('image')) {
             $settingValues['landing_hero_image'] = $this->media
                 ->uploadSiteImage($request->file('image'), 'hero');
         }
@@ -79,6 +80,16 @@ class LandingEditorController extends Controller
 
     public function updateDestination(LandingDestinationRequest $request, Destination $destination)
     {
+        if (app()->getLocale() !== 'vi') {
+            $destination->replaceTranslation(app()->getLocale(), [
+                'short_description' => $request->validated('short_description'),
+            ]);
+
+            return redirect()
+                ->to(route('admin.landing-editor').'#destinations')
+                ->with('success', 'Đã cập nhật bản dịch điểm đến.');
+        }
+
         $data = $request->safe()->except('image');
         $destination->update($data);
         if ($request->hasFile('image')) {
@@ -98,6 +109,7 @@ class LandingEditorController extends Controller
 
     public function storeDestination(LandingDestinationRequest $request)
     {
+        abort_if(app()->getLocale() !== 'vi', 403);
         $data = $request->safe()->except('image');
         $data += [
             'slug' => $this->uniqueDestinationSlug($data['name']),
@@ -122,6 +134,7 @@ class LandingEditorController extends Controller
 
     public function destroyDestination(Destination $destination)
     {
+        abort_if(app()->getLocale() !== 'vi', 403);
         $destination->delete();
         Log::info('Admin landing destination deleted inline', ['destination_id' => $destination->id]);
 
@@ -132,6 +145,7 @@ class LandingEditorController extends Controller
 
     public function storeTour(LandingTourRequest $request)
     {
+        abort_if(app()->getLocale() !== 'vi', 403);
         $tour = DB::transaction(function () use ($request): Tour {
             $data = $request->safe()->except(['image', 'service_ids', 'included_product_ids']);
             $data += [
@@ -164,6 +178,18 @@ class LandingEditorController extends Controller
 
     public function updateTour(LandingTourRequest $request, Tour $tour)
     {
+        if (app()->getLocale() !== 'vi') {
+            $tour->replaceTranslation(app()->getLocale(), $request->safe()->only([
+                'name',
+                'short_description',
+                'description',
+            ]));
+
+            return redirect()
+                ->to(route('admin.landing-editor').'#featured-tours')
+                ->with('success', 'Đã cập nhật bản dịch tour.');
+        }
+
         DB::transaction(function () use ($request, $tour): void {
             $data = $request->safe()->except(['image', 'service_ids', 'included_product_ids']);
             $data['duration_nights'] = max(0, $data['duration_days'] - 1);
@@ -188,6 +214,7 @@ class LandingEditorController extends Controller
 
     public function destroyTour(Tour $tour)
     {
+        abort_if(app()->getLocale() !== 'vi', 403);
         $tour->delete();
         Log::info('Admin landing tour deleted inline', ['tour_id' => $tour->id]);
 

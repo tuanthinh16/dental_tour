@@ -5,11 +5,12 @@
 @section('content')
     @php($editorMode = $editorMode ?? false)
     @php($heroImage = $settings['landing_hero_image'] ?? 'https://picsum.photos/seed/vietnam-coast-journey/1920/1080')
-    @php($heroEyebrow = $settings['landing_hero_eyebrow'] ?? 'Những hành trình có chiều sâu')
-    @php($heroTitleLine1 = $settings['landing_hero_title_line_1'] ?? 'Việt Nam rộng mở.')
-    @php($heroTitleBeforeImage = $settings['landing_hero_title_before_image'] ?? 'Bạn đi theo')
-    @php($heroTitleAfterImage = $settings['landing_hero_title_after_image'] ?? 'nhịp riêng.')
-    @php($heroDescription = $settings['landing_hero_description'] ?? 'Từ bờ biển miền Trung đến những thị trấn di sản, mỗi chuyến đi được thiết kế để bạn thật sự sống trong điểm đến.')
+    @php($localizedSetting = fn (string $key, string $fallback) => $settings[\App\Support\LocaleOptions::settingKey($key)] ?? $settings[$key] ?? $fallback)
+    @php($heroEyebrow = $localizedSetting('landing_hero_eyebrow', __('site.hero.eyebrow')))
+    @php($heroTitleLine1 = $localizedSetting('landing_hero_title_line_1', __('site.hero.title_line_1')))
+    @php($heroTitleBeforeImage = $localizedSetting('landing_hero_title_before_image', __('site.hero.title_before_image')))
+    @php($heroTitleAfterImage = $localizedSetting('landing_hero_title_after_image', __('site.hero.title_after_image')))
+    @php($heroDescription = $localizedSetting('landing_hero_description', __('site.hero.description')))
 
     @if($editorMode)
         <div class="fixed inset-x-0 bottom-5 z-[90] flex justify-center px-4">
@@ -42,8 +43,8 @@
             </h1>
             <p data-hero-action class="mt-8 max-w-2xl text-base leading-7 text-white/72 md:text-xl md:leading-8">{{ $heroDescription }}</p>
             <div data-hero-action class="mt-10 flex flex-col gap-3 sm:flex-row">
-                <a href="{{ route('tours.index') }}" title="Khám phá danh sách hành trình" class="accent-contrast rounded-full bg-coral px-8 py-4 font-semibold transition-transform hover:scale-105">Khám phá hành trình</a>
-                <a href="#consultation" title="Thiết kế tour riêng với chuyên gia" class="rounded-full border border-white/45 bg-white/10 px-8 py-4 font-semibold text-white backdrop-blur transition-colors hover:bg-white hover:text-ink">Thiết kế tour riêng</a>
+                <a href="{{ route('tours.index') }}" title="{{ __('site.hero.explore') }}" class="accent-contrast rounded-full bg-coral px-8 py-4 font-semibold transition-transform hover:scale-105">{{ __('site.hero.explore') }}</a>
+                <a href="#consultation" title="{{ __('site.hero.custom') }}" class="rounded-full border border-white/45 bg-white/10 px-8 py-4 font-semibold text-white backdrop-blur transition-colors hover:bg-white hover:text-ink">{{ __('site.hero.custom') }}</a>
             </div>
         </div>
         <div class="absolute bottom-8 left-1/2 h-12 w-px -translate-x-1/2 bg-gradient-to-b from-white/70 to-transparent"></div>
@@ -62,7 +63,7 @@
                     <article data-motion-card class="group relative overflow-hidden bg-forest {{ $index === 0 ? 'md:col-span-7 md:row-span-2' : 'md:col-span-5 md:row-span-1' }}">
                         <div class="absolute inset-0 bg-cover bg-center grayscale-[20%] transition-transform duration-700 ease-out group-hover:scale-105" style="background-image: url('{{ $destination->image?->file_path ?: 'https://picsum.photos/seed/'.urlencode($destination->slug).'/1200/900' }}')"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/10 to-transparent"></div>
-                        <a href="{{ route('tours.index') }}" class="absolute inset-0 z-10 {{ $editorMode ? 'pointer-events-none' : '' }}" aria-label="Xem tour tại {{ $destination->name }}"></a>
+                        <a href="{{ route('tours.index') }}" class="absolute inset-0 z-10 {{ $editorMode ? 'pointer-events-none' : '' }}" aria-label="{{ __('site.tour.details') }} {{ $destination->name }}"></a>
                         <div class="absolute inset-x-0 bottom-0 flex items-end justify-between gap-5 p-7 text-white md:p-9">
                             <div>
                                 <h3 class="text-3xl font-semibold tracking-[-0.04em] md:text-4xl">{{ $destination->name }}</h3>
@@ -146,10 +147,10 @@
                     <article data-destination-sort-item="{{ $destination->id }}" @if($editorMode) draggable="true" @endif class="destination-panel group relative min-w-0 overflow-hidden border-r border-white/15 last:border-r-0 {{ $editorMode ? 'cursor-grab active:cursor-grabbing' : '' }}">
                         <div class="absolute inset-0 bg-cover bg-center opacity-75 grayscale transition duration-700 group-hover:scale-105 group-hover:grayscale-0" style="background-image: url('{{ $destination->image?->file_path ?: 'https://picsum.photos/seed/'.urlencode($destination->slug).'/1000/1200' }}')"></div>
                         <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/10 to-transparent"></div>
-                        <a href="{{ route('tours.index') }}" class="absolute inset-0 z-10 {{ $editorMode ? 'pointer-events-none' : '' }}" aria-label="Xem tour tại {{ $destination->name }}"></a>
+                        <a href="{{ route('tours.index') }}" class="absolute inset-0 z-10 {{ $editorMode ? 'pointer-events-none' : '' }}" aria-label="{{ __('site.tour.details') }} {{ $destination->name }}"></a>
                         <div class="absolute inset-x-0 bottom-0 p-6 text-white md:p-8">
                             <h3 class="text-2xl font-semibold tracking-[-0.04em] [writing-mode:horizontal-tb]">{{ $destination->name }}</h3>
-                            <p class="mt-3 max-h-0 overflow-hidden text-sm leading-6 text-white/65 opacity-0 transition-all duration-500 group-hover:max-h-24 group-hover:opacity-100">{{ $destination->short_description }}</p>
+                            <p class="mt-3 max-h-0 overflow-hidden text-sm leading-6 text-white/65 opacity-0 transition-all duration-500 group-hover:max-h-24 group-hover:opacity-100">{{ $destination->translated('short_description') }}</p>
                         </div>
                         @if($editorMode)
                             <button data-visual-editor-open="edit-destination-accordion-{{ $destination->id }}" type="button" class="accent-contrast absolute right-4 top-4 z-30 rounded-full bg-coral px-4 py-2 text-xs font-semibold opacity-0 shadow-xl transition-opacity group-hover:opacity-100">Sửa</button>
@@ -158,7 +159,7 @@
                     </article>
                 @endforeach
             </div>
-            @if($editorMode)
+            @if($editorMode && app()->getLocale() === 'vi')
                 @include('admin.landing-editor.destination-create')
             @endif
         </div>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="vi">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -15,36 +15,41 @@
             <a href="{{ route('admin.dashboard') }}" class="shrink-0 text-base font-extrabold tracking-[-0.04em] md:text-lg">DENTAL<span class="text-coral">TOUR</span><span class="ml-2 text-[10px] font-medium uppercase tracking-[0.16em] text-white/45">CMS</span></a>
             <nav class="hidden min-w-0 flex-1 items-center justify-center gap-5 overflow-x-auto whitespace-nowrap text-sm font-medium text-white/65 lg:flex">
                 @foreach([
-                    ['dashboard', 'Tổng quan'],
-                    ['landing-editor', 'Visual Editor'],
-                    ['destinations.index', 'Điểm đến'],
-                    ['included-services.index', 'Dịch vụ'],
-                    ['products.index', 'Sản phẩm'],
-                    ['tours.index', 'Tour'],
-                    ['consultations.index', 'Tư vấn'],
-                    ['pages.index', 'Trang nội dung'],
-                    ['settings.index', 'Giao diện'],
+                    ['dashboard', __('admin.dashboard')],
+                    ['landing-editor', __('admin.visual_editor')],
+                    ['destinations.index', __('admin.destinations')],
+                    ['included-services.index', __('admin.services')],
+                    ['products.index', __('admin.products')],
+                    ['tours.index', __('admin.tours')],
+                    ['consultations.index', __('admin.consultations')],
+                    ['pages.index', __('admin.pages')],
+                    ['settings.index', __('admin.settings')],
                 ] as [$route, $label])
                     <a href="{{ route('admin.'.$route) }}" class="transition-colors hover:text-white">{{ $label }}</a>
                 @endforeach
-                <a href="{{ route('admin.settings.index', ['tab' => 'seo']) }}" title="Mở cấu hình SEO website" class="text-coral transition-colors hover:text-white">SEO</a>
+            <a href="{{ route('admin.settings.index', ['tab' => 'seo']) }}" title="SEO" class="text-coral transition-colors hover:text-white">{{ __('admin.seo') }}</a>
             </nav>
-            <a href="{{ route('admin.landing-editor') }}" class="accent-contrast ml-auto shrink-0 rounded-full bg-coral px-4 py-2 text-xs font-semibold transition-transform hover:scale-105 md:px-5 md:text-sm">Chỉnh landing</a>
-            <button id="logout" type="button" class="hidden shrink-0 text-xs text-white/45 transition-colors hover:text-white lg:block">Đăng xuất</button>
+            <div class="ml-auto flex shrink-0 rounded-full border border-white/25 p-1 text-[10px] font-bold tracking-[0.08em]">
+                @foreach(['vi' => 'VI', 'en' => 'EN'] as $locale => $label)
+                    <a href="{{ route('language.update', ['locale' => $locale, 'redirect' => request()->getRequestUri()]) }}" @class(['rounded-full px-2 py-1 transition-colors', 'bg-white text-ink' => app()->getLocale() === $locale, 'text-white/60 hover:text-white' => app()->getLocale() !== $locale])>{{ $label }}</a>
+                @endforeach
+            </div>
+            <a href="{{ route('admin.landing-editor') }}" class="accent-contrast shrink-0 rounded-full bg-coral px-4 py-2 text-xs font-semibold transition-transform hover:scale-105 md:px-5 md:text-sm">{{ __('admin.edit_landing') }}</a>
+            <button id="logout" type="button" class="hidden shrink-0 text-xs text-white/45 transition-colors hover:text-white lg:block">{{ __('admin.logout') }}</button>
         </div>
         <nav class="mx-auto mt-2 flex max-w-[90rem] gap-4 overflow-x-auto px-2 pb-1 text-xs font-medium text-ink/55 lg:hidden">
             @foreach([
-                ['dashboard', 'Tổng quan'],
-                ['landing-editor', 'Visual Editor'],
-                ['destinations.index', 'Điểm đến'],
-                ['products.index', 'Sản phẩm'],
-                ['tours.index', 'Tour'],
-                ['pages.index', 'Nội dung'],
-                ['settings.index', 'Giao diện'],
+                ['dashboard', __('admin.dashboard')],
+                ['landing-editor', __('admin.visual_editor')],
+                ['destinations.index', __('admin.destinations')],
+                ['products.index', __('admin.products')],
+                ['tours.index', __('admin.tours')],
+                ['pages.index', __('admin.pages')],
+                ['settings.index', __('admin.settings')],
             ] as [$route, $label])
                 <a href="{{ route('admin.'.$route) }}" class="shrink-0">{{ $label }}</a>
             @endforeach
-            <a href="{{ route('admin.settings.index', ['tab' => 'seo']) }}" title="Mở cấu hình SEO website" class="shrink-0 text-forest">SEO</a>
+            <a href="{{ route('admin.settings.index', ['tab' => 'seo']) }}" title="SEO" class="shrink-0 text-forest">{{ __('admin.seo') }}</a>
         </nav>
     </header>
 

@@ -17,7 +17,7 @@
         <select class="field-control sm:col-span-2" name="tour_id">
             <option value="">Tour quan tâm</option>
             @foreach($allTours as $option)
-                <option value="{{ $option->id }}" @selected(old('tour_id', $selectedTour?->id) == $option->id)>{{ $option->name }}</option>
+                <option value="{{ $option->id }}" @selected(old('tour_id', $selectedTour?->id) == $option->id)>{{ $option->translated('name') }}</option>
             @endforeach
         </select>
         <textarea class="field-control min-h-28 sm:col-span-2" name="message" placeholder="Bạn mong muốn điều gì ở chuyến đi?">{{ old('message') }}</textarea>

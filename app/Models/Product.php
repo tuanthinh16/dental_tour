@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,7 @@ use Illuminate\Support\Str;
 
 class Product extends Model
 {
-    use SoftDeletes;
+    use HasTranslations, SoftDeletes;
 
     protected $table = 'products';
 
@@ -36,6 +37,7 @@ class Product extends Model
         'included_product_ids',
         'itinerary_data',
         'excluded_items',
+        'translations',
         'is_featured',
         'sort_order',
         'is_active',
@@ -48,6 +50,7 @@ class Product extends Model
             'original_daily_price' => 'decimal:2',
             'itinerary_data' => 'array',
             'excluded_items' => 'array',
+            'translations' => 'array',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
         ];

@@ -32,6 +32,14 @@ class LandingTourRequest extends FormRequest
 
     public function rules(): array
     {
+        if (app()->getLocale() !== 'vi') {
+            return [
+                'name' => ['required', 'string', 'max:255'],
+                'short_description' => ['required', 'string', 'max:1500'],
+                'description' => ['nullable', 'string', 'max:10000'],
+            ];
+        }
+
         return [
             'destination_id' => [
                 'nullable',

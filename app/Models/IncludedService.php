@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class IncludedService extends Model
 {
-    use SoftDeletes;
+    use HasTranslations, SoftDeletes;
 
     protected $table = 'categories';
 
@@ -16,13 +17,14 @@ class IncludedService extends Model
         'category_code',
         'name',
         'description',
+        'translations',
         'sort_order',
         'is_active',
     ];
 
     protected function casts(): array
     {
-        return ['is_active' => 'boolean'];
+        return ['is_active' => 'boolean', 'translations' => 'array'];
     }
 
     protected static function booted(): void

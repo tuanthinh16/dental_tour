@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\Web;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/language/{locale}', [LocaleController::class, 'update'])->name('language.update');
 
 Route::get('/', [Web\HomeController::class, 'index'])->name('home');
 Route::get('/tours', [Web\TourController::class, 'index'])->name('tours.index');

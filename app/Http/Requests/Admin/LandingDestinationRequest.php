@@ -13,6 +13,12 @@ class LandingDestinationRequest extends FormRequest
 
     public function rules(): array
     {
+        if (app()->getLocale() !== 'vi') {
+            return [
+                'short_description' => ['nullable', 'string', 'max:1000'],
+            ];
+        }
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'short_description' => ['nullable', 'string', 'max:1000'],

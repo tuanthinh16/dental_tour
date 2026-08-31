@@ -14,7 +14,7 @@
     ];
 @endphp
 <!doctype html>
-<html lang="vi">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,7 +23,7 @@
     <meta name="robots" content="index,follow,max-image-preview:large">
     <link rel="canonical" href="{{ url()->current() }}">
     <meta property="og:type" content="website">
-    <meta property="og:locale" content="vi_VN">
+    <meta property="og:locale" content="{{ app()->getLocale() === 'en' ? 'en_US' : 'vi_VN' }}">
     <meta property="og:title" content="{{ $pageTitle }}">
     <meta property="og:description" content="{{ $pageDescription }}">
     <meta property="og:url" content="{{ url()->current() }}">
@@ -51,10 +51,15 @@
             <a href="{{ route('home') }}" title="Về trang chủ Dental Tour" class="text-base font-extrabold tracking-[-0.04em] md:text-lg">
                 DENTAL<span class="text-coral">TOUR</span>
             </a>
-            <nav class="flex items-center gap-4 text-sm font-medium md:gap-8">
-                <a href="{{ route('home') }}" title="Xem trang chủ" class="hidden transition-colors hover:text-coral sm:block">Trang chủ</a>
-                <a href="{{ route('tours.index') }}" title="Xem toàn bộ tour" class="transition-colors hover:text-coral">Tour</a>
-                <a href="{{ route('home') }}#consultation" title="Nhận tư vấn hành trình" class="rounded-full bg-white px-4 py-2 text-ink transition-transform hover:scale-105 md:px-6">Nhận tư vấn</a>
+            <nav class="flex items-center gap-3 text-sm font-medium md:gap-6">
+                <a href="{{ route('home') }}" title="{{ __('site.nav.home') }}" class="hidden transition-colors hover:text-coral sm:block">{{ __('site.nav.home') }}</a>
+                <a href="{{ route('tours.index') }}" title="{{ __('site.nav.tours') }}" class="transition-colors hover:text-coral">{{ __('site.nav.tours') }}</a>
+                <div class="flex rounded-full border border-white/25 p-1 text-[10px] font-bold tracking-[0.08em]">
+                    @foreach(['vi' => 'VI', 'en' => 'EN'] as $locale => $label)
+                        <a href="{{ route('language.update', ['locale' => $locale, 'redirect' => request()->getRequestUri()]) }}" aria-label="{{ $locale === 'vi' ? 'Chuyển sang tiếng Việt' : 'Switch to English' }}" @class(['rounded-full px-2 py-1 transition-colors', 'bg-white text-ink' => app()->getLocale() === $locale, 'text-white/60 hover:text-white' => app()->getLocale() !== $locale])>{{ $label }}</a>
+                    @endforeach
+                </div>
+                <a href="{{ route('home') }}#consultation" title="{{ __('site.nav.consultation') }}" class="rounded-full bg-white px-4 py-2 text-ink transition-transform hover:scale-105 md:px-6">{{ __('site.nav.consultation') }}</a>
             </nav>
         </div>
     </header>
@@ -79,17 +84,17 @@
         <div class="mx-auto grid max-w-[90rem] gap-14 px-6 py-20 md:grid-cols-[1.5fr_1fr_1fr] md:px-10 lg:py-28">
             <div>
                 <div class="text-2xl font-extrabold tracking-[-0.05em]">DENTAL<span class="text-coral">TOUR</span></div>
-                <p class="mt-6 max-w-md text-base leading-7 text-white/55">Hành trình được thiết kế riêng, kết nối văn hóa bản địa với dịch vụ tận tâm.</p>
+                <p class="mt-6 max-w-md text-base leading-7 text-white/55">{{ __('site.footer.description') }}</p>
             </div>
             <div>
-                <h3 class="text-sm font-semibold text-white">Khám phá</h3>
+                <h3 class="text-sm font-semibold text-white">{{ __('site.footer.explore') }}</h3>
                 <div class="mt-5 space-y-3 text-sm text-white/55">
-                    <a class="block transition-colors hover:text-white" href="{{ route('tours.index') }}">Tất cả tour</a>
-                    <a class="block transition-colors hover:text-white" href="{{ route('home') }}#destinations">Điểm đến</a>
+                    <a class="block transition-colors hover:text-white" href="{{ route('tours.index') }}">{{ __('site.footer.all_tours') }}</a>
+                    <a class="block transition-colors hover:text-white" href="{{ route('home') }}#destinations">{{ __('site.footer.destinations') }}</a>
                 </div>
             </div>
             <div>
-                <h3 class="text-sm font-semibold text-white">Liên hệ</h3>
+                <h3 class="text-sm font-semibold text-white">{{ __('site.footer.contact') }}</h3>
                 <p class="mt-5 text-sm leading-7 text-white/55">
                     {{ ($settings ?? [])['contact_email'] ?? 'hello@dentaltour.vn' }}<br>
                     {{ ($settings ?? [])['contact_phone'] ?? '+84 900 000 000' }}
