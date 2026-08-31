@@ -15,17 +15,23 @@
 
     <section class="bg-cream px-5 py-32 md:px-10 md:py-48">
         <div class="mx-auto max-w-[90rem]">
-            <div data-tour-zigzag-grid class="grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-x-8 md:gap-y-12 lg:gap-x-10 lg:gap-y-14">
-                @forelse($tours as $index => $tour)
-                    <div @class([
-                        'min-w-0 md:col-span-6 lg:col-span-5',
-                        'lg:col-start-1' => $index % 2 === 0,
-                        'lg:col-start-7 lg:pt-16' => $index % 2 === 1,
-                    ])>
+            <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                <div>
+                    <p class="text-sm font-medium text-forest">Khám phá theo nhịp của bạn</p>
+                    <h2 class="mt-3 text-3xl font-semibold tracking-[-0.04em] text-ink md:text-4xl">Lướt qua từng trải nghiệm.</h2>
+                </div>
+                <div data-tour-rail-controls class="flex gap-2">
+                    <button data-tour-rail-prev type="button" title="Xem tour trước" aria-label="Tour trước" class="grid size-11 place-items-center border border-ink/25 text-lg transition-colors hover:bg-ink hover:text-white">←</button>
+                    <button data-tour-rail-next type="button" title="Xem tour tiếp theo" aria-label="Tour tiếp theo" class="grid size-11 place-items-center border border-ink/25 text-lg transition-colors hover:bg-ink hover:text-white">→</button>
+                </div>
+            </div>
+            <div data-tour-rail tabindex="0" class="tour-rail mt-12 flex snap-x snap-mandatory gap-8 overflow-x-auto pr-5 pb-5 md:mt-16 md:-mr-10 md:gap-12 md:pr-10">
+                @forelse($tours as $tour)
+                    <div class="w-[calc(100vw-3rem)] shrink-0 snap-start sm:w-[42rem] lg:w-[78vw] lg:max-w-[76rem]">
                         @include('tours._card', ['tour' => $tour])
                     </div>
                 @empty
-                    <p class="text-lg text-ink/55 md:col-span-12">Chưa có tour phù hợp.</p>
+                    <p class="text-lg text-ink/55">Chưa có tour phù hợp.</p>
                 @endforelse
             </div>
             <div class="mt-20">{{ $tours->links() }}</div>

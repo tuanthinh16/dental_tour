@@ -12,6 +12,8 @@ Route::get('/tours/{slug}', [Web\TourController::class, 'show'])->name(
 Route::post('/consultation', [Web\ConsultationController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('consultation.store');
+Route::get('/robots.txt', [Web\SeoController::class, 'robots'])->name('robots');
+Route::get('/sitemap.xml', [Web\SeoController::class, 'sitemap'])->name('sitemap');
 
 Route::prefix('admin')
     ->name('admin.')
@@ -151,6 +153,22 @@ Route::prefix('admin')
                 ->middleware('permission:tours.delete')
                 ->name('included-services.destroy');
 
+            Route::get('products', [Admin\ProductController::class, 'index'])
+                ->middleware('permission:tours.view')
+                ->name('products.index');
+            Route::post('products', [Admin\ProductController::class, 'store'])
+                ->middleware('permission:tours.create')
+                ->name('products.store');
+            Route::put('products/{product}', [Admin\ProductController::class, 'update'])
+                ->middleware('permission:tours.update')
+                ->name('products.update');
+            Route::delete('products/{product}', [
+                Admin\ProductController::class,
+                'destroy',
+            ])
+                ->middleware('permission:tours.delete')
+                ->name('products.destroy');
+
             Route::get('tours', [Admin\TourController::class, 'index'])
                 ->middleware('permission:tours.view')
                 ->name('tours.index');
@@ -235,6 +253,12 @@ Route::prefix('admin')
             ])
                 ->middleware('permission:settings.update')
                 ->name('settings.theme.update');
+            Route::put('settings/seo', [
+                Admin\SettingController::class,
+                'updateSeo',
+            ])
+                ->middleware('permission:settings.update')
+                ->name('settings.seo.update');
             Route::get('settings/{setting}/edit', [
                 Admin\SettingController::class,
                 'edit',

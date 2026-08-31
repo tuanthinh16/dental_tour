@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dental Tour | Việt Nam theo nhịp riêng')
+@section('title', $settings['seo_site_title'] ?? 'Dental Tour | Việt Nam theo nhịp riêng')
 
 @section('content')
     @php($editorMode = $editorMode ?? false)
@@ -42,8 +42,8 @@
             </h1>
             <p data-hero-action class="mt-8 max-w-2xl text-base leading-7 text-white/72 md:text-xl md:leading-8">{{ $heroDescription }}</p>
             <div data-hero-action class="mt-10 flex flex-col gap-3 sm:flex-row">
-                <a href="{{ route('tours.index') }}" class="accent-contrast rounded-full bg-coral px-8 py-4 font-semibold transition-transform hover:scale-105">Khám phá hành trình</a>
-                <a href="#consultation" class="rounded-full border border-white/45 bg-white/10 px-8 py-4 font-semibold text-white backdrop-blur transition-colors hover:bg-white hover:text-ink">Thiết kế tour riêng</a>
+                <a href="{{ route('tours.index') }}" title="Khám phá danh sách hành trình" class="accent-contrast rounded-full bg-coral px-8 py-4 font-semibold transition-transform hover:scale-105">Khám phá hành trình</a>
+                <a href="#consultation" title="Thiết kế tour riêng với chuyên gia" class="rounded-full border border-white/45 bg-white/10 px-8 py-4 font-semibold text-white backdrop-blur transition-colors hover:bg-white hover:text-ink">Thiết kế tour riêng</a>
             </div>
         </div>
         <div class="absolute bottom-8 left-1/2 h-12 w-px -translate-x-1/2 bg-gradient-to-b from-white/70 to-transparent"></div>
@@ -91,27 +91,24 @@
                 </div>
                 <div class="lg:justify-self-end">
                     <p class="max-w-lg text-base leading-7 text-white/55">Những trải nghiệm được sắp theo một nhịp thoáng hơn để bạn dễ so sánh, chọn lựa và bắt đầu hành trình.</p>
-                    <a href="{{ route('tours.index') }}" class="mt-7 inline-flex border-b border-white pb-2 text-sm font-semibold text-white transition-colors hover:border-coral hover:text-coral">Xem toàn bộ tour</a>
+                    <div data-tour-rail-controls class="mt-7 flex items-center gap-5">
+                        <a href="{{ route('tours.index') }}" class="inline-flex border-b border-white pb-2 text-sm font-semibold text-white transition-colors hover:border-coral hover:text-coral">Xem toàn bộ tour</a>
+                        <div class="flex gap-2">
+                            <button data-tour-rail-prev type="button" title="Xem tour trước" aria-label="Tour trước" class="grid size-10 place-items-center border border-white/25 text-lg transition-colors hover:bg-white hover:text-ink">←</button>
+                            <button data-tour-rail-next type="button" title="Xem tour tiếp theo" aria-label="Tour tiếp theo" class="grid size-10 place-items-center border border-white/25 text-lg transition-colors hover:bg-white hover:text-ink">→</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div data-tour-zigzag-grid class="mt-20 grid grid-cols-1 gap-10 md:grid-cols-12 md:gap-x-8 md:gap-y-12 lg:gap-x-10 lg:gap-y-14">
-                @foreach($featuredTours as $index => $tour)
-                    <div @class([
-                        'min-w-0 md:col-span-6 lg:col-span-5',
-                        'lg:col-start-1' => $index % 2 === 0,
-                        'lg:col-start-7 lg:pt-16' => $index % 2 === 1,
-                    ])>
-                        @include('tours._card', ['tour' => $tour, 'editorMode' => $editorMode])
+            <div data-tour-rail tabindex="0" class="tour-rail mt-16 flex snap-x snap-mandatory gap-8 overflow-x-auto pr-5 pb-5 md:mt-20 md:-mr-10 md:gap-12 md:pr-10">
+                @foreach($featuredTours as $tour)
+                    <div class="w-[calc(100vw-3rem)] shrink-0 snap-start sm:w-[42rem] lg:w-[78vw] lg:max-w-[76rem]">
+                        @include('tours._card', ['tour' => $tour, 'editorMode' => $editorMode, 'tone' => 'dark'])
                     </div>
                 @endforeach
                 @if($editorMode)
-                    @php($createTourIndex = $featuredTours->count())
-                    <div @class([
-                        'min-w-0 md:col-span-6 lg:col-span-5',
-                        'lg:col-start-1' => $createTourIndex % 2 === 0,
-                        'lg:col-start-7 lg:pt-16' => $createTourIndex % 2 === 1,
-                    ])>
+                    <div class="w-[calc(100vw-3rem)] shrink-0 snap-start sm:w-[42rem] lg:w-[78vw] lg:max-w-[76rem]">
                         @include('admin.landing-editor.tour-create')
                     </div>
                 @endif
@@ -167,58 +164,49 @@
         </div>
     </section>
 
-    <section class="bg-sand px-5 py-32 md:px-10 md:py-48">
+    <section class="bg-sand px-5 py-20 md:px-10 md:py-28">
         <div class="mx-auto max-w-[90rem]">
-            <div class="flex flex-col justify-between gap-8 border-b border-ink/15 pb-10 md:flex-row md:items-end">
+            <div class="flex flex-col justify-between gap-6 border-b border-ink/15 pb-7 md:flex-row md:items-end">
                 <div>
-                    <h2 class="chapter-title max-w-4xl font-semibold">Đánh giá từ người đã trải nghiệm.</h2>
-                    <p class="mt-6 max-w-xl text-base leading-7 text-ink/55">Những chia sẻ được gửi lại sau khi hành trình kết thúc.</p>
+                    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-forest">Khách hàng chia sẻ</p>
+                    <h2 class="mt-3 max-w-3xl text-3xl font-semibold leading-[1.05] tracking-[-0.045em] md:text-4xl">Đánh giá từ người đã trải nghiệm.</h2>
+                    <p class="mt-4 max-w-xl text-sm leading-6 text-ink/55">Những chia sẻ được gửi lại sau khi hành trình kết thúc.</p>
                 </div>
-                <div class="flex items-center gap-4">
-                    <span class="text-5xl font-semibold tracking-[-0.05em]">4.9</span>
+                <div class="flex items-center gap-3 md:pb-1">
+                    <span class="text-4xl font-semibold tracking-[-0.05em]">4.9</span>
                     <div>
                         <div class="flex gap-1 text-coral" aria-label="4.9 trên 5 sao">
                             @for($star = 0; $star < 5; $star++)
                                 <svg viewBox="0 0 20 20" class="size-4 fill-current" aria-hidden="true"><path d="m10 1.8 2.45 4.97 5.48.8-3.97 3.86.94 5.46L10 14.3l-4.9 2.58.94-5.46-3.97-3.86 5.48-.8L10 1.8Z" /></svg>
                             @endfor
                         </div>
-                        <p class="mt-2 text-xs font-medium text-ink/45">Điểm hài lòng trung bình</p>
+                        <p class="mt-1 text-xs font-medium text-ink/45">Điểm hài lòng trung bình</p>
                     </div>
                 </div>
             </div>
 
-            <div class="mt-14 grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
-                <div data-review-image class="relative aspect-[4/5] max-h-[42rem] overflow-hidden">
-                    <img src="https://picsum.photos/seed/vietnam-traveler-portrait/1000/1250" alt="Du khách khám phá Việt Nam" class="h-full w-full object-cover grayscale-[35%] contrast-125 transition-transform duration-700 ease-out hover:scale-105">
-                    <div class="absolute inset-0 bg-forest/15 mix-blend-multiply"></div>
-                </div>
-                <div>
-                    @foreach([
-                        ['Mia Laurent', 'France', 'mia-laurent-vietnam-review', 'Tôi không cảm thấy mình đang theo một tour. Tôi cảm thấy mình đang được sống ở Việt Nam.'],
-                        ['Daniel Kim', 'Singapore', 'daniel-kim-family-review', 'Lịch trình đủ tinh tế để cả gia đình có thời gian ở bên nhau, không phải chạy theo điểm đến.'],
-                        ['Sofia Rossi', 'Italy', 'sofia-rossi-travel-review', 'Những điều đáng nhớ nhất lại là các khoảnh khắc nhỏ mà đội ngũ đã âm thầm chuẩn bị.'],
-                    ] as $index => [$name, $country, $avatar, $quote])
-                        <div data-testimonial @class(['hidden' => $index > 0])>
-                            <div class="flex gap-1 text-coral" aria-label="5 trên 5 sao">
-                                @for($star = 0; $star < 5; $star++)
-                                    <svg viewBox="0 0 20 20" class="size-4 fill-current" aria-hidden="true"><path d="m10 1.8 2.45 4.97 5.48.8-3.97 3.86.94 5.46L10 14.3l-4.9 2.58.94-5.46-3.97-3.86 5.48-.8L10 1.8Z" /></svg>
-                                @endfor
-                            </div>
-                            <blockquote class="mt-6 text-4xl font-medium leading-[1.08] tracking-[-0.045em] md:text-6xl">“{{ $quote }}”</blockquote>
-                            <div class="mt-9 flex items-center gap-4">
-                                <img src="https://picsum.photos/seed/{{ $avatar }}/120/120" alt="Ảnh của {{ $name }}" class="size-12 rounded-full object-cover grayscale-[20%]">
-                                <div>
-                                    <p class="text-sm font-semibold">{{ $name }}, {{ $country }}</p>
-                                    <p class="mt-1 text-xs text-ink/45">Khách đã trải nghiệm</p>
-                                </div>
+            <div data-review-list class="mt-9 grid overflow-hidden border border-ink/15 md:grid-cols-3">
+                @foreach([
+                    ['Mia Laurent', 'France', 'mia-laurent-vietnam-review', 'Tôi không cảm thấy mình đang theo một tour. Tôi cảm thấy mình đang được sống ở Việt Nam.'],
+                    ['Daniel Kim', 'Singapore', 'daniel-kim-family-review', 'Lịch trình đủ tinh tế để cả gia đình có thời gian ở bên nhau, không phải chạy theo điểm đến.'],
+                    ['Sofia Rossi', 'Italy', 'sofia-rossi-travel-review', 'Những điều đáng nhớ nhất lại là các khoảnh khắc nhỏ mà đội ngũ đã âm thầm chuẩn bị.'],
+                ] as [$name, $country, $avatar, $quote])
+                    <article data-review-item class="flex min-h-64 flex-col border-b border-ink/15 bg-sand p-6 last:border-b-0 md:min-h-72 md:border-b-0 md:border-r md:p-7 md:last:border-r-0">
+                        <div class="flex gap-1 text-coral" aria-label="5 trên 5 sao">
+                            @for($star = 0; $star < 5; $star++)
+                                <svg viewBox="0 0 20 20" class="size-4 fill-current" aria-hidden="true"><path d="m10 1.8 2.45 4.97 5.48.8-3.97 3.86.94 5.46L10 14.3l-4.9 2.58.94-5.46-3.97-3.86 5.48-.8L10 1.8Z" /></svg>
+                            @endfor
+                        </div>
+                        <blockquote class="mt-5 text-lg font-medium leading-7 tracking-[-0.025em]">“{{ $quote }}”</blockquote>
+                        <div class="mt-auto flex items-center gap-3 border-t border-ink/10 pt-5">
+                            <img src="https://picsum.photos/seed/{{ $avatar }}/120/120" alt="Ảnh của {{ $name }}" width="36" height="36" loading="lazy" decoding="async" class="size-9 rounded-full object-cover grayscale-[20%]">
+                            <div>
+                                <p class="text-sm font-semibold">{{ $name }}, {{ $country }}</p>
+                                <p class="mt-0.5 text-xs text-ink/45">Khách đã trải nghiệm</p>
                             </div>
                         </div>
-                    @endforeach
-                    <div class="mt-12 flex gap-3">
-                        <button type="button" data-testimonial-prev aria-label="Đánh giá trước" class="grid size-12 place-items-center rounded-full border border-ink/25 text-lg transition-colors hover:bg-ink hover:text-white">‹</button>
-                        <button type="button" data-testimonial-next aria-label="Đánh giá tiếp theo" class="grid size-12 place-items-center rounded-full bg-ink text-lg text-white transition-transform hover:scale-105">›</button>
-                    </div>
-                </div>
+                    </article>
+                @endforeach
             </div>
         </div>
     </section>

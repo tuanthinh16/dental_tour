@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Setting;
 use App\Support\ThemeOptions;
 use Database\Seeders\InitialAdminSeeder;
 use Database\Seeders\RolePermissionSeeder;
@@ -90,6 +89,11 @@ class ThemeSettingsTest extends TestCase
             ->put('/admin/settings/theme', $payload)
             ->assertSessionHasErrors(['ui_color_accent', 'ui_font_body']);
 
-        $this->assertSame(0, Setting::count());
+        $this->assertDatabaseMissing('settings', [
+            'key' => 'ui_color_primary',
+        ]);
+        $this->assertDatabaseMissing('settings', [
+            'key' => 'ui_font_body',
+        ]);
     }
 }

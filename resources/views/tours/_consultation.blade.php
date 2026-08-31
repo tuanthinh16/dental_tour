@@ -25,5 +25,5 @@
     <input type="hidden" name="utm_source" value="{{ request('utm_source') }}">
     <input type="hidden" name="utm_medium" value="{{ request('utm_medium') }}">
     <input type="hidden" name="utm_campaign" value="{{ request('utm_campaign') }}">
-    <button class="accent-contrast mt-9 w-full bg-coral px-6 py-4 font-semibold transition-transform hover:scale-[1.01]">Gửi yêu cầu tư vấn</button>
+    <button title="Gửi thông tin để nhận tư vấn" class="accent-contrast mt-9 w-full bg-coral px-6 py-4 font-semibold transition-transform hover:scale-[1.01]">Gửi yêu cầu tư vấn</button>
 </form>

@@ -44,9 +44,9 @@ class LandingEditorTest extends TestCase
             ->assertSee('data-visual-editor-open="create-tour-inline"', false)
             ->assertSee('data-visual-editor-open="create-destination-inline"', false)
             ->assertSee('data-service-picker', false)
-            ->assertSee('data-tour-zigzag-grid', false)
+            ->assertSee('data-tour-rail', false)
             ->assertSee('data-tour-card', false)
-            ->assertDontSee('tour-stack-card', false)
+            ->assertSee('data-tour-rail-next', false)
             ->assertSee('max-h-64 overflow-y-auto', false)
             ->assertSee('data-visual-editor-panel', false)
             ->assertSee('data-destination-sort-list', false)
@@ -59,8 +59,8 @@ class LandingEditorTest extends TestCase
             ->assertDontSee('Sửa hero')
             ->assertDontSee('Sửa trực tiếp tour')
             ->assertDontSee('Sửa điểm đến')
-            ->assertSee('data-tour-zigzag-grid', false)
-            ->assertDontSee('tour-stack-card', false)
+            ->assertSee('data-tour-rail', false)
+            ->assertSee('data-tour-rail-next', false)
             ->assertDontSee('create-tour-inline')
             ->assertDontSee('create-destination-inline');
 

@@ -2,10 +2,12 @@
 
 @section('title', $tour->name.' | Dental Tour')
 @section('meta_description', $tour->short_description)
+@section('meta_keywords', $tour->name.', '.($tour->destination?->name ?: 'Việt Nam').', '.$tour->destination?->name.', tour Việt Nam')
+@section('og_image', $tour->image?->file_path)
 
 @section('content')
     <section class="grain ink-contrast relative flex min-h-screen items-end overflow-hidden bg-ink px-5 pb-20 pt-40 text-white md:px-10 md:pb-28">
-        <div class="absolute inset-0 bg-cover bg-center opacity-75" style="background-image: url('{{ $tour->image?->file_path ?: 'https://picsum.photos/seed/'.urlencode($tour->slug).'/1920/1080' }}')"></div>
+        <div role="img" aria-label="{{ $tour->image?->alt_text ?: 'Ảnh tour '.$tour->name }}" class="absolute inset-0 bg-cover bg-center opacity-75" style="background-image: url('{{ $tour->image?->file_path ?: 'https://picsum.photos/seed/'.urlencode($tour->slug).'/1920/1080' }}')"></div>
         <div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/10"></div>
         <div class="relative mx-auto w-full max-w-[90rem]">
             <p class="text-sm font-medium text-coral">{{ $tour->destination?->name }} / Tour trải nghiệm</p>

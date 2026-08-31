@@ -1,16 +1,21 @@
 @php($editorMode = $editorMode ?? false)
 @php($includedServices = $tour->services->where('is_active', true)->take(5))
 @php($hasPrice = (float) $tour->base_price > 0)
+@php($isDark = ($tone ?? 'light') === 'dark')
 
-<article data-tour-card class="group relative overflow-hidden rounded-[2rem] bg-white text-ink shadow-[0_28px_75px_rgba(0,0,0,0.2)] md:rounded-[2.5rem]">
+<article @class([
+    'group relative border-y',
+    'border-white/15 text-white' => $isDark,
+    'border-ink/15 text-ink' => ! $isDark,
+]) data-tour-card>
     @if($editorMode)
-        <button data-visual-editor-open="edit-tour-{{ $tour->id }}" type="button" class="accent-contrast absolute right-5 top-5 z-50 rounded-full bg-coral px-4 py-2 text-xs font-semibold shadow-xl transition-transform duration-300 hover:scale-105">Sửa</button>
+        <button data-visual-editor-open="edit-tour-{{ $tour->id }}" type="button" title="Sửa tour {{ $tour->name }}" class="accent-contrast absolute right-5 top-5 z-50 rounded-full bg-coral px-4 py-2 text-xs font-semibold shadow-xl transition-transform duration-300 hover:scale-105">Sửa</button>
     @endif
-    <a href="{{ route('tours.show', $tour->slug) }}" @class(['block', 'pointer-events-none' => $editorMode])>
-        <div class="relative aspect-[5/4] overflow-hidden bg-sand">
-            <div data-tour-card-image class="absolute inset-0 scale-[0.94]">
-                <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105" style="background-image: url('{{ $tour->image?->file_path ?: 'https://picsum.photos/seed/'.urlencode($tour->slug).'/1200/900' }}')"></div>
-            </div>
+    <a href="{{ route('tours.show', $tour->slug) }}" @class(['block md:grid md:grid-cols-[1.2fr_0.8fr]', 'pointer-events-none' => $editorMode])>
+            <div class="relative min-h-[19rem] overflow-hidden bg-sand sm:min-h-[24rem] md:min-h-[30rem]">
+                <div data-tour-card-image class="absolute inset-0 scale-[0.94]">
+                    <img src="{{ $tour->image?->file_path ?: 'https://picsum.photos/seed/'.urlencode($tour->slug).'/1200/900' }}" alt="{{ $tour->image?->alt_text ?: 'Trải nghiệm '.$tour->name }}" width="1200" height="900" loading="lazy" decoding="async" class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105">
+                </div>
             <div class="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-ink/10"></div>
             @if($includedServices->isNotEmpty())
                 <div class="absolute inset-0 hidden flex-col justify-end bg-ink/92 p-7 text-white opacity-0 backdrop-blur-sm transition-all duration-500 group-hover:opacity-100 group-focus-within:opacity-100 md:flex md:p-8">
@@ -32,25 +37,41 @@
                 <span class="accent-contrast absolute left-5 top-5 bg-coral px-3 py-2 text-xs font-semibold">{{ $tour->badge }}</span>
             @endif
         </div>
-        <div class="flex min-h-[18rem] flex-col justify-between p-7 md:p-9">
+        <div @class([
+            'flex min-h-[19rem] flex-col justify-between p-7 md:min-h-[30rem] md:p-10 lg:p-14',
+            'md:border-l md:border-white/15' => $isDark,
+            'md:border-l md:border-ink/15' => ! $isDark,
+        ])>
             <div>
-                <div class="flex items-center justify-between gap-4 text-sm font-medium text-forest">
+                <div @class([
+                    'flex items-center justify-between gap-4 text-sm font-medium',
+                    'text-coral' => $isDark,
+                    'text-forest' => ! $isDark,
+                ])>
                     <span>{{ $tour->destination?->name ?: 'Việt Nam' }}</span>
-                    <span class="h-px flex-1 bg-ink/12"></span>
+                    <span @class(['h-px flex-1', 'bg-white/20' => $isDark, 'bg-ink/12' => ! $isDark])></span>
                     <span>{{ $tour->duration_days ?: 1 }} ngày</span>
                 </div>
-                <h3 class="mt-5 text-3xl font-semibold leading-[1.02] tracking-[-0.045em] md:text-[2.15rem]">{{ $tour->name }}</h3>
-                <p class="mt-4 line-clamp-2 max-w-lg text-sm leading-6 text-ink/55 md:text-base md:leading-7">{{ $tour->short_description }}</p>
+                <h3 class="mt-7 max-w-xl text-4xl font-semibold leading-[1.02] tracking-[-0.045em] md:text-5xl">{{ $tour->name }}</h3>
+                <p @class([
+                    'mt-6 max-w-lg text-sm leading-6 md:text-base md:leading-7',
+                    'text-white/60' => $isDark,
+                    'text-ink/55' => ! $isDark,
+                ])>{{ $tour->short_description }}</p>
                 @if($includedServices->isNotEmpty())
                     <div class="mt-5 md:hidden">
-                        <p class="text-xs font-semibold text-forest">Dịch vụ trong gói</p>
-                        <p class="mt-2 line-clamp-2 text-sm leading-6 text-ink/55">{{ $includedServices->pluck('name')->join(' · ') }}</p>
+                        <p @class(['text-xs font-semibold', 'text-coral' => $isDark, 'text-forest' => ! $isDark])>Dịch vụ trong gói</p>
+                        <p @class(['mt-2 line-clamp-2 text-sm leading-6', 'text-white/60' => $isDark, 'text-ink/55' => ! $isDark])>{{ $includedServices->pluck('name')->join(' · ') }}</p>
                     </div>
                 @endif
             </div>
-            <div class="mt-8 flex items-end justify-between gap-6 border-t border-ink/12 pt-5">
+            <div @class([
+                'mt-10 flex items-end justify-between gap-6 border-t pt-5',
+                'border-white/15' => $isDark,
+                'border-ink/12' => ! $isDark,
+            ])>
                 <div>
-                    <span class="text-xs text-ink/45">{{ $hasPrice ? 'Giá từ' : 'Giá dịch vụ' }}</span>
+                    <span @class(['text-xs', 'text-white/45' => $isDark, 'text-ink/45' => ! $isDark])>{{ $hasPrice ? 'Giá từ' : 'Giá dịch vụ' }}</span>
                     <div class="mt-1 text-xl font-semibold">{{ $hasPrice ? \App\Support\MoneyFormatter::format($tour->base_price, $tour->currency) : 'Liên hệ' }}</div>
                 </div>
                 <span class="flex items-center gap-2 text-sm font-semibold">Xem chi tiết <span aria-hidden="true">↗</span></span>

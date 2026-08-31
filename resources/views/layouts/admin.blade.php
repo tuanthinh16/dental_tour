@@ -19,6 +19,7 @@
                     ['landing-editor', 'Visual Editor'],
                     ['destinations.index', 'Điểm đến'],
                     ['included-services.index', 'Dịch vụ'],
+                    ['products.index', 'Sản phẩm'],
                     ['tours.index', 'Tour'],
                     ['consultations.index', 'Tư vấn'],
                     ['pages.index', 'Trang nội dung'],
@@ -26,6 +27,7 @@
                 ] as [$route, $label])
                     <a href="{{ route('admin.'.$route) }}" class="transition-colors hover:text-white">{{ $label }}</a>
                 @endforeach
+                <a href="{{ route('admin.settings.index', ['tab' => 'seo']) }}" title="Mở cấu hình SEO website" class="text-coral transition-colors hover:text-white">SEO</a>
             </nav>
             <a href="{{ route('admin.landing-editor') }}" class="accent-contrast ml-auto shrink-0 rounded-full bg-coral px-4 py-2 text-xs font-semibold transition-transform hover:scale-105 md:px-5 md:text-sm">Chỉnh landing</a>
             <button id="logout" type="button" class="hidden shrink-0 text-xs text-white/45 transition-colors hover:text-white lg:block">Đăng xuất</button>
@@ -35,12 +37,14 @@
                 ['dashboard', 'Tổng quan'],
                 ['landing-editor', 'Visual Editor'],
                 ['destinations.index', 'Điểm đến'],
+                ['products.index', 'Sản phẩm'],
                 ['tours.index', 'Tour'],
                 ['pages.index', 'Nội dung'],
                 ['settings.index', 'Giao diện'],
             ] as [$route, $label])
                 <a href="{{ route('admin.'.$route) }}" class="shrink-0">{{ $label }}</a>
             @endforeach
+            <a href="{{ route('admin.settings.index', ['tab' => 'seo']) }}" title="Mở cấu hình SEO website" class="shrink-0 text-forest">SEO</a>
         </nav>
     </header>
 

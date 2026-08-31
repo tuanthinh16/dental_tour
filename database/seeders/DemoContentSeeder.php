@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\Setting;
 use App\Support\ThemeOptions;
+use App\Support\SeoOptions;
 use Illuminate\Database\Seeder;
 
 class DemoContentSeeder extends Seeder
@@ -66,6 +67,11 @@ class DemoContentSeeder extends Seeder
 
         // Thêm 2026-08-29: giá trị mặc định cho trình tùy chỉnh màu và font trong Admin CMS.
         foreach (ThemeOptions::DEFAULTS as $key => $value) {
+            Setting::firstOrCreate(compact('key'), compact('value'));
+        }
+
+        // Thêm 2026-08-31: cấu hình SEO mặc định, có thể sửa trong tab SEO của CMS.
+        foreach (SeoOptions::DEFAULTS as $key => $value) {
             Setting::firstOrCreate(compact('key'), compact('value'));
         }
     }

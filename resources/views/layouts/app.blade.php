@@ -1,15 +1,46 @@
+@php
+    $seo = \App\Support\SeoOptions::normalize($settings ?? []);
+    $pageTitle = trim($__env->yieldContent('title')) ?: $seo['seo_site_title'];
+    $pageDescription = trim($__env->yieldContent('meta_description')) ?: $seo['seo_site_description'];
+    $pageKeywords = trim($__env->yieldContent('meta_keywords')) ?: $seo['seo_keywords'];
+    $pageOgImage = trim($__env->yieldContent('og_image')) ?: ($seo['seo_og_image'] ?: '/favicon.ico');
+    $pageOgImage = filter_var($pageOgImage, FILTER_VALIDATE_URL) ? $pageOgImage : url($pageOgImage);
+    $structuredData = [
+        '@context' => 'https://schema.org',
+        '@type' => 'TravelAgency',
+        'name' => $seo['seo_site_title'],
+        'description' => $pageDescription,
+        'url' => url('/'),
+    ];
+@endphp
 <!doctype html>
 <html lang="vi">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="@yield('meta_description', 'Khám phá những hành trình đáng nhớ cùng Dental Tour.')">
-    <title>@yield('title', 'Dental Tour')</title>
+    <meta name="description" content="{{ $pageDescription }}">
+    <meta name="keywords" content="{{ $pageKeywords }}">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <link rel="canonical" href="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="vi_VN">
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ $pageDescription }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="{{ $pageOgImage }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $pageTitle }}">
+    <meta name="twitter:description" content="{{ $pageDescription }}">
+    <meta name="twitter:image" content="{{ $pageOgImage }}">
+    <link rel="manifest" href="{{ asset('site.webmanifest') }}">
+    <meta name="theme-color" content="{{ $themeSettings['ui_color_primary'] }}">
+    <title>{{ $pageTitle }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,600,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&family=Geist:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=Lora:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script type="application/ld+json">@json($structuredData)</script>
 </head>
 <body
     class="bg-cream font-sans text-ink antialiased"
@@ -17,13 +48,13 @@
 >
     <header data-site-header class="public-site-header fixed inset-x-0 top-0 z-50 px-4 pt-4 md:px-8 md:pt-6">
         <div data-site-header-shell class="site-header-shell ink-contrast mx-auto flex max-w-[90rem] items-center justify-between rounded-full px-5 py-3 text-white md:px-7">
-            <a href="{{ route('home') }}" class="text-base font-extrabold tracking-[-0.04em] md:text-lg">
+            <a href="{{ route('home') }}" title="Về trang chủ Dental Tour" class="text-base font-extrabold tracking-[-0.04em] md:text-lg">
                 DENTAL<span class="text-coral">TOUR</span>
             </a>
             <nav class="flex items-center gap-4 text-sm font-medium md:gap-8">
-                <a href="{{ route('home') }}" class="hidden transition-colors hover:text-coral sm:block">Trang chủ</a>
-                <a href="{{ route('tours.index') }}" class="transition-colors hover:text-coral">Tour</a>
-                <a href="{{ route('home') }}#consultation" class="rounded-full bg-white px-4 py-2 text-ink transition-transform hover:scale-105 md:px-6">Nhận tư vấn</a>
+                <a href="{{ route('home') }}" title="Xem trang chủ" class="hidden transition-colors hover:text-coral sm:block">Trang chủ</a>
+                <a href="{{ route('tours.index') }}" title="Xem toàn bộ tour" class="transition-colors hover:text-coral">Tour</a>
+                <a href="{{ route('home') }}#consultation" title="Nhận tư vấn hành trình" class="rounded-full bg-white px-4 py-2 text-ink transition-transform hover:scale-105 md:px-6">Nhận tư vấn</a>
             </nav>
         </div>
     </header>

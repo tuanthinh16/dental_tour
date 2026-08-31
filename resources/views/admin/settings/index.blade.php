@@ -3,7 +3,13 @@
 @section('title', 'Giao diện website')
 
 @section('content')
-    <form data-theme-form method="post" action="{{ route('admin.settings.theme.update') }}" class="min-w-0">
+    <div data-settings-tabs data-initial-tab="{{ request('tab', 'theme') }}">
+        <div class="mb-6 flex gap-2 border-b border-slate-200 pb-4">
+            <button data-settings-tab="theme" type="button" title="Mở cài đặt giao diện" class="bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white">Giao diện</button>
+            <button data-settings-tab="seo" type="button" title="Mở cài đặt SEO" class="px-4 py-2.5 text-sm font-semibold text-slate-500 transition-colors hover:text-slate-950">SEO</button>
+        </div>
+
+    <form data-settings-tab-panel="theme" data-theme-form method="post" action="{{ route('admin.settings.theme.update') }}" class="min-w-0">
         @csrf
         @method('PUT')
 
@@ -14,9 +20,9 @@
                 <p class="mt-4 max-w-2xl text-sm leading-6 text-slate-500">Điều chỉnh bảng màu và font theo từng vai trò. Mẫu font cập nhật trực tiếp, còn bản xem trước website được mở khi bạn cần kiểm tra tổng thể.</p>
             </div>
             <div class="flex flex-wrap gap-3">
-                <button data-theme-preview-open type="button" class="rounded-full border border-slate-950 px-5 py-2.5 text-sm font-semibold text-slate-950 transition-colors hover:bg-slate-950 hover:text-white">Xem trước website</button>
-                <button data-theme-reset type="button" class="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-950 hover:text-white">Khôi phục mặc định</button>
-                <button class="rounded-full bg-slate-950 px-6 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-105">Lưu giao diện</button>
+                <button data-theme-preview-open type="button" title="Mở xem trước giao diện website" class="rounded-full border border-slate-950 px-5 py-2.5 text-sm font-semibold text-slate-950 transition-colors hover:bg-slate-950 hover:text-white">Xem trước website</button>
+                <button data-theme-reset type="button" title="Khôi phục màu và font mặc định" class="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-950 hover:text-white">Khôi phục mặc định</button>
+                <button title="Lưu cài đặt giao diện" class="rounded-full bg-slate-950 px-6 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-105">Lưu giao diện</button>
             </div>
         </div>
 
@@ -85,15 +91,70 @@
         </div>
     </form>
 
+    <section data-settings-tab-panel="seo" hidden class="max-w-5xl">
+        <div class="flex flex-col justify-between gap-5 border-b border-slate-200 pb-6 md:flex-row md:items-end">
+            <div>
+                <p class="text-sm font-semibold text-brand-600">Hiển thị trên công cụ tìm kiếm</p>
+                <h1 class="mt-2 text-4xl font-semibold tracking-[-0.04em] text-slate-950 md:text-5xl">SEO website</h1>
+                <p class="mt-4 max-w-2xl text-sm leading-6 text-slate-500">Thiết lập metadata mặc định cho trang chủ, danh sách tour và những trang chưa có nội dung SEO riêng.</p>
+            </div>
+            <a href="{{ route('sitemap') }}" target="_blank" rel="noopener" title="Mở sitemap XML trong tab mới" class="shrink-0 border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-950 hover:text-white">Xem sitemap</a>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" action="{{ route('admin.settings.seo.update') }}" class="mt-8 grid gap-5 bg-white p-6 shadow-sm md:grid-cols-2 md:p-8">
+            @csrf
+            @method('PUT')
+            <label class="text-sm font-semibold text-slate-800">SEO title mặc định *
+                <input name="seo_site_title" required maxlength="255" value="{{ old('seo_site_title', $seo['seo_site_title']) }}" class="mt-2 w-full border border-slate-200 bg-slate-50 px-4 py-3 font-normal outline-none focus:border-brand-500">
+                <span class="mt-2 block text-xs font-normal text-slate-400">Nên giữ trong khoảng 50–60 ký tự.</span>
+            </label>
+            <label class="text-sm font-semibold text-slate-800">Keywords *
+                <input name="seo_keywords" required maxlength="1000" value="{{ old('seo_keywords', $seo['seo_keywords']) }}" class="mt-2 w-full border border-slate-200 bg-slate-50 px-4 py-3 font-normal outline-none focus:border-brand-500">
+                <span class="mt-2 block text-xs font-normal text-slate-400">Ngăn cách các từ khóa bằng dấu phẩy.</span>
+            </label>
+            <label class="text-sm font-semibold text-slate-800 md:col-span-2">SEO description mặc định *
+                <textarea name="seo_site_description" rows="4" required maxlength="500" class="mt-2 w-full border border-slate-200 bg-slate-50 px-4 py-3 font-normal outline-none focus:border-brand-500">{{ old('seo_site_description', $seo['seo_site_description']) }}</textarea>
+                <span class="mt-2 block text-xs font-normal text-slate-400">Nên giữ trong khoảng 120–160 ký tự.</span>
+            </label>
+            <label class="text-sm font-semibold text-slate-800 md:col-span-2">Ảnh chia sẻ mạng xã hội
+                <span class="mt-3 grid gap-4 md:grid-cols-[14rem_1fr] md:items-center">
+                    <span data-image-preview class="grid aspect-[1.91/1] place-items-center overflow-hidden bg-slate-100 text-xs font-normal text-slate-400">
+                        @if($seo['seo_og_image'])
+                            <img src="{{ $seo['seo_og_image'] }}" alt="Ảnh chia sẻ mạng xã hội hiện tại" class="h-full w-full object-cover">
+                        @else
+                            Chưa có ảnh chia sẻ
+                        @endif
+                    </span>
+                    <span>
+                        <input data-image-input type="file" name="seo_og_image_upload" accept="image/jpeg,image/png,image/webp" class="block w-full cursor-pointer border border-dashed border-slate-300 bg-slate-50 px-4 py-5 text-sm file:mr-3 file:border-0 file:bg-slate-950 file:px-4 file:py-2 file:text-white">
+                        <span class="mt-2 block text-xs font-normal text-slate-400">JPG, PNG hoặc WebP, tối đa 8 MB. Khuyến nghị ảnh 1200 × 630 px.</span>
+                    </span>
+                </span>
+            </label>
+            <label class="text-sm font-semibold text-slate-800 md:col-span-2">Hoặc dùng URL ảnh ngoài
+                <input name="seo_og_image" type="url" maxlength="2048" value="{{ old('seo_og_image', $seo['seo_og_image']) }}" placeholder="https://..." class="mt-2 w-full border border-slate-200 bg-slate-50 px-4 py-3 font-normal outline-none focus:border-brand-500">
+                <span class="mt-2 block text-xs font-normal text-slate-400">Nếu upload ảnh mới, ảnh upload sẽ được ưu tiên.</span>
+            </label>
+            <label class="text-sm font-semibold text-slate-800 md:col-span-2">Đường dẫn bổ sung trong sitemap XML
+                <textarea name="seo_sitemap_urls" rows="5" maxlength="10000" placeholder="/gioi-thieu&#10;/chinh-sach-bao-mat" class="mt-2 w-full border border-slate-200 bg-slate-50 px-4 py-3 font-normal outline-none focus:border-brand-500">{{ old('seo_sitemap_urls', $seo['seo_sitemap_urls']) }}</textarea>
+                <span class="mt-2 block text-xs font-normal text-slate-400">Mỗi dòng một đường dẫn nội bộ bắt đầu bằng /. Trang chủ, danh sách tour và tour đang hiển thị được cập nhật tự động.</span>
+            </label>
+            <div class="flex flex-wrap gap-3 border-t border-slate-200 pt-5 md:col-span-2">
+                <button title="Lưu cấu hình SEO" class="rounded-full bg-slate-950 px-6 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-105">Lưu SEO</button>
+                <a href="{{ route('robots') }}" target="_blank" rel="noopener" title="Mở robots.txt trong tab mới" class="rounded-full border border-slate-300 px-6 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-950 hover:text-white">Kiểm tra robots.txt</a>
+            </div>
+        </form>
+    </section>
+
     <div data-theme-preview-modal class="fixed inset-0 z-[100] hidden overflow-y-auto bg-slate-950/70 p-3 backdrop-blur-sm sm:p-6 lg:p-10" role="dialog" aria-modal="true" aria-labelledby="theme-preview-title">
-        <button data-theme-preview-close type="button" class="absolute inset-0 size-full cursor-default" aria-label="Đóng xem trước"></button>
+        <button data-theme-preview-close type="button" title="Đóng xem trước" class="absolute inset-0 size-full cursor-default" aria-label="Đóng xem trước"></button>
         <div data-theme-preview-dialog class="relative mx-auto w-full max-w-6xl overflow-hidden bg-white shadow-[0_40px_120px_rgba(0,0,0,0.35)]">
             <div class="flex items-center justify-between border-b border-slate-200 bg-white px-5 py-4 md:px-7">
                 <div class="min-w-0">
                     <h2 id="theme-preview-title" class="truncate text-base font-semibold text-slate-950">Xem trước website</h2>
                     <p class="mt-1 text-xs text-slate-400">Thay đổi được cập nhật trực tiếp và chưa được lưu.</p>
                 </div>
-                <button data-theme-preview-close data-theme-preview-close-button type="button" class="ml-5 shrink-0 rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-950 hover:text-white">Đóng</button>
+                <button data-theme-preview-close data-theme-preview-close-button type="button" title="Đóng xem trước website" class="ml-5 shrink-0 rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-950 hover:text-white">Đóng</button>
             </div>
 
             <div data-theme-preview class="overflow-hidden bg-cream text-ink" style="--ui-color-primary: {{ $theme['ui_color_primary'] }}; --ui-color-accent: {{ $theme['ui_color_accent'] }}; --ui-color-background: {{ $theme['ui_color_background'] }}; --ui-color-text: {{ $theme['ui_color_text'] }}; --ui-color-surface: {{ $theme['ui_color_surface'] }}; --ui-color-primary-contrast: {{ $theme['ui_color_primary_contrast'] }}; --ui-color-accent-contrast: {{ $theme['ui_color_accent_contrast'] }}; --ui-color-text-contrast: {{ $theme['ui_color_text_contrast'] }}; --ui-font-header: {{ $theme['ui_font_header_stack'] }}; --ui-font-title: {{ $theme['ui_font_title_stack'] }}; --ui-font-body: {{ $theme['ui_font_body_stack'] }};">
@@ -134,5 +195,6 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 @endsection

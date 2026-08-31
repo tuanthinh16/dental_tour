@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\SettingRequest;
+use App\Http\Requests\Admin\SeoSettingRequest;
 use App\Http\Requests\Admin\ThemeSettingRequest;
 use App\Models\Setting;
 use App\Services\SettingService;
 use App\Support\ThemeOptions;
+use App\Support\SeoOptions;
 
 class SettingController extends Controller
 {
@@ -15,8 +17,11 @@ class SettingController extends Controller
 
     public function index()
     {
+        $settings = $this->service->repository->values();
+
         return view('admin.settings.index', [
-            'theme' => ThemeOptions::normalize($this->service->repository->values()),
+            'theme' => ThemeOptions::normalize($settings),
+            'seo' => SeoOptions::normalize($settings),
             'fonts' => ThemeOptions::fontNames(),
         ]);
     }
@@ -28,6 +33,15 @@ class SettingController extends Controller
         return redirect()
             ->route('admin.settings.index')
             ->with('success', 'Đã cập nhật giao diện website.');
+    }
+
+    public function updateSeo(SeoSettingRequest $request)
+    {
+        $this->service->updateSeo($request->validated());
+
+        return redirect()
+            ->route('admin.settings.index', ['tab' => 'seo'])
+            ->with('success', 'Đã cập nhật cấu hình SEO.');
     }
 
     public function edit(Setting $setting)

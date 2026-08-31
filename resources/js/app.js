@@ -63,6 +63,71 @@ document.querySelectorAll('[data-image-input]').forEach((input) => {
     });
 });
 
+document.querySelectorAll('[data-settings-tabs]').forEach((container) => {
+    const buttons = [...container.querySelectorAll('[data-settings-tab]')];
+    const panels = [...container.querySelectorAll('[data-settings-tab-panel]')];
+    const setTab = (tab) => {
+        panels.forEach((panel) => {
+            panel.hidden = panel.dataset.settingsTabPanel !== tab;
+        });
+        buttons.forEach((button) => {
+            const active = button.dataset.settingsTab === tab;
+            button.classList.toggle('bg-slate-950', active);
+            button.classList.toggle('text-white', active);
+            button.classList.toggle('text-slate-500', !active);
+            button.setAttribute('aria-pressed', String(active));
+        });
+    };
+
+    setTab(container.dataset.initialTab === 'seo' ? 'seo' : 'theme');
+    buttons.forEach((button) => button.addEventListener('click', () => setTab(button.dataset.settingsTab)));
+});
+
+document.querySelectorAll('[data-product-catalog]').forEach((catalog) => {
+    const viewKey = 'dental-tour-product-view';
+    const buttons = [...catalog.querySelectorAll('[data-product-view-switch]')];
+    const views = [...catalog.querySelectorAll('[data-product-view]')];
+    const setView = (view) => {
+        views.forEach((element) => {
+            element.hidden = element.dataset.productView !== view;
+        });
+        buttons.forEach((button) => {
+            const active = button.dataset.productViewSwitch === view;
+            button.setAttribute('aria-pressed', String(active));
+            button.classList.toggle('bg-ink', active);
+            button.classList.toggle('text-white', active);
+            button.classList.toggle('text-ink/60', !active);
+        });
+        localStorage.setItem(viewKey, view);
+    };
+
+    const savedView = localStorage.getItem(viewKey);
+    setView(savedView === 'card' ? 'card' : 'list');
+    buttons.forEach((button) => button.addEventListener('click', () => setView(button.dataset.productViewSwitch)));
+});
+
+document.querySelectorAll('[data-product-dialog-open]').forEach((button) => {
+    button.addEventListener('click', () => {
+        const dialog = document.getElementById(button.dataset.productDialogOpen);
+        if (!dialog) return;
+
+        dialog.hidden = false;
+        dialog.querySelector('input, textarea, select')?.focus();
+    });
+});
+
+document.querySelectorAll('[data-product-dialog-close]').forEach((button) => {
+    button.addEventListener('click', () => {
+        document.getElementById(button.dataset.productDialogClose)?.setAttribute('hidden', 'hidden');
+    });
+});
+
+document.querySelectorAll('[data-product-dialog]').forEach((dialog) => {
+    dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) dialog.hidden = true;
+    });
+});
+
 document.querySelectorAll('[data-visual-editor-open]').forEach((button) => {
     button.addEventListener('click', () => {
         const panel = document.getElementById(button.dataset.visualEditorOpen);
@@ -179,32 +244,48 @@ if (!reducedMotion) {
         });
     });
 
-    document.querySelectorAll('[data-tour-card]').forEach((card, index) => {
-        gsap.from(card, {
-            y: index % 2 === 0 ? 48 : 82,
-            opacity: 0,
-            duration: 0.9,
-            ease: 'power3.out',
-            scrollTrigger: { trigger: card, start: 'top 90%' },
+    document.querySelectorAll('[data-tour-rail]').forEach((rail) => {
+        const cards = [...rail.querySelectorAll('[data-tour-card]')];
+        const controls = rail.closest('section')?.querySelector('[data-tour-rail-controls]');
+        const scrollRail = (direction) => {
+            rail.scrollBy({ left: rail.clientWidth * 0.84 * direction, behavior: 'smooth' });
+        };
+
+        controls?.querySelector('[data-tour-rail-prev]')?.addEventListener('click', () => scrollRail(-1));
+        controls?.querySelector('[data-tour-rail-next]')?.addEventListener('click', () => scrollRail(1));
+        rail.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowLeft') scrollRail(-1);
+            if (event.key === 'ArrowRight') scrollRail(1);
         });
 
-        const image = card.querySelector('[data-tour-card-image]');
-        if (!image) return;
+        gsap.from(cards, {
+            x: 64,
+            opacity: 0,
+            duration: 0.85,
+            stagger: 0.1,
+            ease: 'power3.out',
+            scrollTrigger: { trigger: rail, start: 'top 84%' },
+        });
 
-        gsap.fromTo(
-            image,
-            { scale: 0.94 },
-            {
-                scale: 1,
-                ease: 'none',
-                scrollTrigger: {
-                    trigger: card,
-                    start: 'top 92%',
-                    end: 'top 38%',
-                    scrub: 1,
+        cards.forEach((card) => {
+            const image = card.querySelector('[data-tour-card-image]');
+            if (!image) return;
+
+            gsap.fromTo(
+                image,
+                { scale: 0.94 },
+                {
+                    scale: 1,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: rail,
+                        start: 'top 88%',
+                        end: 'top 40%',
+                        scrub: 1,
+                    },
                 },
-            },
-        );
+            );
+        });
     });
 
     document.querySelectorAll('[data-motion-card]').forEach((card) => {
@@ -217,34 +298,17 @@ if (!reducedMotion) {
         });
     });
 
-    document.querySelectorAll('[data-review-image]').forEach((frame) => {
-        const image = frame.querySelector('img');
-        if (!image) return;
+    document.querySelectorAll('[data-review-list]').forEach((list) => {
+        const reviews = list.querySelectorAll('[data-review-item]');
+        if (!reviews.length) return;
 
-        gsap.fromTo(
-            image,
-            { scale: 0.88 },
-            {
-                scale: 1,
-                ease: 'none',
-                scrollTrigger: {
-                    trigger: frame,
-                    start: 'top 88%',
-                    end: 'top 32%',
-                    scrub: 1,
-                },
-            },
-        );
-
-        gsap.to(frame, {
-            opacity: 0.28,
-            ease: 'none',
-            scrollTrigger: {
-                trigger: frame,
-                start: 'bottom 18%',
-                end: 'bottom top',
-                scrub: 1,
-            },
+        gsap.from(reviews, {
+            y: 20,
+            opacity: 0,
+            duration: reducedMotion ? 0 : 0.55,
+            stagger: reducedMotion ? 0 : 0.1,
+            ease: 'power3.out',
+            scrollTrigger: { trigger: list, start: 'top 86%' },
         });
     });
 }

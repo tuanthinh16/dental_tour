@@ -1,9 +1,9 @@
-<article data-tour-card class="group relative min-h-[38rem] overflow-hidden rounded-[2rem] bg-white text-ink shadow-[0_28px_75px_rgba(0,0,0,0.2)] md:rounded-[2.5rem]">
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_25%,rgba(255,108,79,0.16),transparent_38%)]"></div>
-    <button data-visual-editor-open="create-tour-inline" type="button" aria-expanded="false" class="absolute inset-0 z-10 flex w-full flex-col items-center justify-center p-8 text-center transition-colors duration-500 hover:bg-sand/55">
-        <span class="accent-contrast grid size-16 place-items-center rounded-full bg-coral text-3xl shadow-xl transition-transform duration-500 group-hover:scale-110">+</span>
-        <span class="mt-6 text-3xl font-semibold tracking-[-0.04em]">Thêm tour</span>
-        <span class="mt-3 max-w-sm text-sm leading-6 text-ink/50">Tạo một card mới đúng tại vị trí cuối danh sách.</span>
+<article data-tour-card class="group relative min-h-[30rem] border-y border-white/15 text-white md:min-h-[34rem]">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_25%,rgba(255,108,79,0.2),transparent_38%)]"></div>
+    <button data-visual-editor-open="create-tour-inline" type="button" aria-expanded="false" class="absolute inset-0 z-10 flex w-full flex-col justify-end p-8 text-left transition-colors duration-500 hover:bg-white/5 md:p-12">
+        <span class="accent-contrast grid size-14 place-items-center bg-coral text-3xl shadow-xl transition-transform duration-500 group-hover:scale-110">+</span>
+        <span class="mt-8 text-4xl font-semibold tracking-[-0.04em]">Thêm tour</span>
+        <span class="mt-3 max-w-md text-sm leading-6 text-white/55">Tạo một hành trình mới tại cuối dải trải nghiệm.</span>
     </button>
     <div id="create-tour-inline" data-visual-editor-panel hidden class="absolute inset-0 z-20 overflow-y-auto bg-white p-7 md:p-10">
         <div class="flex items-start justify-between gap-5 border-b border-ink/10 pb-6">
